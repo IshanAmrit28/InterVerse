@@ -2,12 +2,9 @@ const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema(
   {
-    firstName: {
+    userName: {
       type: String,
-      required: [true, "First name is required"],
-    },
-    lastName: {
-      type: String,
+      required: [true, "userName is required"],
     },
     email: {
       type: String,
@@ -20,13 +17,13 @@ const userSchema = new mongoose.Schema(
     },
     userType: {
       type: String,
-      enum: ["Student", "Admin"],
-      default: "Student",
+      enum: ["candidate", "recruiter"],
+      default: "candidate",
     },
     report: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Interview",
+        ref: "UserReports",
       },
     ],
   },

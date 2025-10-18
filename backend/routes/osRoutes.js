@@ -2,8 +2,8 @@ const express = require("express");
 const osController = require("../controllers/osController");
 const osRouter = express.Router();
 
-osRouter.get("/", osController.getOSQuestions);
-osRouter.post("/", osController.createOSQuestion);
-osRouter.delete("/:id", osController.deleteOSQuestion);
+osRouter.get("/", osController.getQuestions);
+osRouter.post("/", osController.createQuestion);
+osRouter.delete("/:id", osController.deleteQuestion);
 
 module.exports = osRouter;

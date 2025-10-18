@@ -2,8 +2,8 @@ const express = require("express");
 const cnController = require("../controllers/cnController");
 const cnRouter = express.Router();
 
-cnRouter.get("/", cnController.getCNQuestions);
-cnRouter.post("/", cnController.createCNQuestion);
-cnRouter.delete("/:id", cnController.deleteCNQuestion);
+cnRouter.get("/", cnController.getQuestions);
+cnRouter.post("/", cnController.createQuestion);
+cnRouter.delete("/:id", cnController.deleteQuestion);
 
 module.exports = cnRouter;
