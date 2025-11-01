@@ -7,7 +7,7 @@ import Signup from "./Pages/Signup";
 function App() {
   return (
     <>
-      {/* <Login /> */}
+      <Login />
       <Signup />
 
       {/* <Navbar />
@@ -18,5 +18,4 @@ function App() {
     </>
   );
 }
-
 export default App;

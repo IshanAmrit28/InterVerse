@@ -75,7 +75,7 @@ const Signup = () => {
                     value="candidate"
                     checked={formData.role === "candidate"}
                     onChange={handleChange}
-                    className="w-4 h-4 cursor-pointer text-[#f8e8b6] bg-gray-700 border-gray-600 focus:ring-[#f6de96] focus:ring-2"
+                    className="w-4 h-4 cursor-pointer text-[#6666e9] bg-gray-700 border-gray-600 "
                   />
                   <label
                     htmlFor="candidate"
@@ -92,7 +92,7 @@ const Signup = () => {
                     value="recruiter"
                     checked={formData.role === "recruiter"}
                     onChange={handleChange}
-                    className="w-4 h-4 cursor-pointer text-[#f8e8b6] bg-gray-700 border-gray-600 focus:ring-[#f6de96] focus:ring-2"
+                    className="w-4 h-4 cursor-pointer text-[#6666e9] bg-gray-700 border-gray-600 "
                   />
                   <label
                     htmlFor="recruiter"
