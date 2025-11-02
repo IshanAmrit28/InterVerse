@@ -1,7 +1,3 @@
 const SubjectFactory = require("./subjectModelFactory");
-const CNModel = new SubjectFactory(
-  "cn",
-  "computernetworks",
-  "cn_counter"
-).createModel();
+const CNModel = new SubjectFactory("cn", "computernetworks").createModel();
 module.exports = CNModel;

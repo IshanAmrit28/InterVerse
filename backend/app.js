@@ -9,9 +9,9 @@ const cors = require("cors");
 const rootDir = require("./utils/pathUtil");
 const cnRouter = require("./routes/cnRoutes");
 const dbmsRouter = require("./routes/dbmsRoutes");
-const dsaRouter = require("./routes/dsaRoutes");
 const osRouter = require("./routes/osRoutes");
 const errorsController = require("./controllers/errors");
+const oopsRouter = require("./routes/oopsRoutes");
 
 const app = express();
 
@@ -21,8 +21,8 @@ app.use(cors());
 
 app.use("/api/cn", cnRouter);
 app.use("/api/dbms", dbmsRouter);
-app.use("/api/dsa", dsaRouter);
 app.use("/api/os", osRouter);
+app.use("/api/oops", oopsRouter);
 
 app.use(errorsController.pageNotFound);
 

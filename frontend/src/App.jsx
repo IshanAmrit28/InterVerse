@@ -1,20 +1,17 @@
-import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
-import Interview from "./components/dynamic";
+// import Navbar from "./components/Navbar";
+// import Footer from "./components/Footer";
+
 import Login from "./Pages/Login";
 import Signup from "./Pages/Signup";
+
+import GoogleMeetSimple from "./Pages/InterviewRoomFaceQuestionLogic";
 
 function App() {
   return (
     <>
-      <Login />
       <Signup />
-
-      {/* <Navbar />
-    
-      <Interview />
-      
-      <Footer /> */}
+      <Login />
+      <GoogleMeetSimple />
     </>
   );
 }

@@ -1,7 +1,3 @@
 const SubjectFactory = require("./subjectModelFactory");
-const DBMSModel = new SubjectFactory(
-  "dbms",
-  "dbms",
-  "dbms_counter"
-).createModel();
+const DBMSModel = new SubjectFactory("dbms", "dbms").createModel();
 module.exports = DBMSModel;

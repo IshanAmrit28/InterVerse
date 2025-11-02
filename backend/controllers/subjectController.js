@@ -24,7 +24,7 @@ class SubjectController {
   // Get 3-5 random questions
   getQuestions = async (req, res) => {
     try {
-      const count = Math.floor(Math.random() * 3) + 3; // 3-5 random
+      const count = Math.floor(Math.random() * 3) + 3;
       const questions = await this.model.aggregate([
         { $sample: { size: count } },
       ]);
