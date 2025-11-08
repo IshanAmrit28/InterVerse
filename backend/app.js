@@ -12,12 +12,17 @@ const dbmsRouter = require("./routes/dbmsRoutes");
 const osRouter = require("./routes/osRoutes");
 const errorsController = require("./controllers/errors");
 const oopsRouter = require("./routes/oopsRoutes");
+const interviewRouter = require("./routes/interviewRoutes");
+const userRouter = require("./routes/userRoutes");
 
 const app = express();
 
 app.use(express.urlencoded());
 app.use(express.json());
 app.use(cors());
+
+app.use("/api/interview", interviewRouter);
+app.use("/api/auth", userRouter);
 
 app.use("/api/cn", cnRouter);
 app.use("/api/dbms", dbmsRouter);

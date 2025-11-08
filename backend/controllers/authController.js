@@ -1,138 +1,100 @@
 const { check, validationResult } = require("express-validator");
-const { Error } = require("mongoose");
-const User = require("../models/user");
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const User = require("../models/user");
 
-exports.getLogin = (req, res, next) => {
-  res.render("auth/login", {
-    pageTitle: "Add Home to airbnb",
-    currentPage: "login",
-    isLoggedIn: false,
-    oldInput: { email: "" },
-    errors: [],
-    user: {},
-  });
-};
+// 🔹 Helper: Generate JWT
+const generateToken = (user) =>
+  jwt.sign(
+    { id: user._id, email: user.email, userType: user.userType },
+    process.env.JWT_SECRET,
+    { expiresIn: "30d" }
+  );
 
-exports.getSignup = (req, res, next) => {
-  res.render("auth/signup", {
-    pageTitle: "Signup",
-    currentPage: "signup",
-    isLoggedIn: false,
-    errors: [],
-    oldInput: {
-      userName: "",
-      email: "",
-      password: "",
-      userType: "",
-    },
-    user: {},
-  });
-};
+// ==================== SIGNUP ====================
+exports.signup = [
+  // Validation
+  check("userName", "Name is required").notEmpty(),
+  check("email", "Please enter a valid email").isEmail(),
+  check("password", "Password must be at least 6 characters").isLength({
+    min: 6,
+  }),
+  check("confirmPassword").custom((value, { req }) => {
+    if (value !== req.body.password) throw new Error("Passwords do not match");
+    return true;
+  }),
+  check("userType", "Please select a user type").notEmpty(),
 
-exports.postSignup = [
-  check("userName")
-    .trim()
-    .isLength({ min: 2 })
-    .withMessage("User Name must be at least 2 characters long"),
-
-  check("email")
-    .isEmail()
-    .withMessage("Please enter a valid email address")
-    .normalizeEmail(),
-
-  check("password")
-    .isLength({ min: 8 })
-    .withMessage("Password should be atleast 8 characters long")
-    .matches(/[A-Z]/)
-    .withMessage("Password should contain atleast one uppercase letter")
-    .matches(/[a-z]/)
-    .withMessage("Password should contain atleast one lowercase letter")
-    .matches(/[0-9]/)
-    .withMessage("Password should contain atleast one number")
-    .matches(/[!@&]/)
-    .withMessage("Password should contain atleast one special character")
-    .trim(),
-
-  check("confirmPassword")
-    .trim()
-    .custom((value, { req }) => {
-      if (value !== req.body.password) {
-        throw new Error("Passwords do not match");
-      }
-      return true;
-    }),
-
-  check("userType")
-    .notEmpty()
-    .withMessage("Please select a user type")
-    .isIn(["candidate", "recruiter"])
-    .withMessage("Invalid user type"),
-
-  (req, res, next) => {
-    const { userName, email, password, userType } = req.body;
+  async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(422).render("auth/signup", {
-        pageTitle: "Signup",
-        currentPage: "signup",
-        isLoggedIn: false,
-        errors: errors.array().map((err) => err.msg),
-        oldInput: { userName, email, password, userType },
-        user: {},
-      });
+      return res.status(400).json({ errors: errors.array().map((e) => e.msg) });
     }
 
-    bcrypt
-      .hash(password, 12)
-      .then((hashedPassword) => {
-        const user = new User({
-          userName,
-          email,
-          password: hashedPassword,
-          userType,
-        });
-        return user.save();
-      })
-      .then(() => {
-        res.redirect("/login");
-      })
-      .catch((err) => {
-        return res.status(422).render("auth/signup", {
-          pageTitle: "Signup",
-          currentPage: "signup",
-          isLoggedIn: false,
-          errors: [err.message],
-          oldInput: { userName, email, password, userType },
-          user: {},
-        });
+    try {
+      const { userName, email, password, userType } = req.body;
+
+      const existingUser = await User.findOne({ email });
+      if (existingUser)
+        return res.status(400).json({ message: "Email already registered" });
+
+      const hashedPassword = await bcrypt.hash(password, 12);
+      const user = await User.create({
+        userName,
+        email,
+        password: hashedPassword,
+        userType,
       });
+
+      const token = generateToken(user);
+
+      res.status(201).json({
+        message: "Signup successful",
+        user: { id: user._id, userName, email, userType },
+        token,
+      });
+    } catch (err) {
+      console.error("Signup error:", err);
+      res.status(500).json({ message: "Internal server error" });
+    }
   },
 ];
 
-exports.postLogin = async (req, res, next) => {
+// ==================== LOGIN ====================
+exports.login = async (req, res) => {
   const { email, password } = req.body;
-  const user = await User.findOne({ email: email });
-  const isMatch = await bcrypt.compare(password, user.password);
-  if (!user && !isMatch) {
-    return res.status(422).render("auth/login", {
-      pageTitle: "Login",
-      currentPage: "login",
-      isLoggedIn: false,
-      errors: ["Invalid email or password"],
-      oldInput: { email },
-      user: {},
-    });
-  }
 
-  req.session.isLoggedIn = true;
-  req.session.user = user;
-  res.redirect("/");
+  if (!email || !password)
+    return res.status(400).json({ message: "All fields are required" });
+
+  try {
+    const user = await User.findOne({ email });
+    if (!user)
+      return res.status(401).json({ message: "Invalid email or password" });
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch)
+      return res.status(401).json({ message: "Invalid email or password" });
+
+    const token = generateToken(user);
+
+    res.status(200).json({
+      message: "Login successful",
+      user: {
+        id: user._id,
+        userName: user.userName,
+        email,
+        userType: user.userType,
+      },
+      token,
+    });
+  } catch (err) {
+    console.error("Login error:", err);
+    res.status(500).json({ message: "Internal server error" });
+  }
 };
 
-exports.postLogout = (req, res, next) => {
-  console.log(req.body);
-  req.session.destroy(() => {
-    res.redirect("/login");
-  });
+// ==================== LOGOUT ====================
+exports.logout = (req, res) => {
+  res.status(200).json({ message: "Logged out successfully" });
 };

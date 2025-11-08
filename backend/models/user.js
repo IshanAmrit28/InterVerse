@@ -23,7 +23,7 @@ const userSchema = new mongoose.Schema(
     report: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "UserReports",
+        ref: "InterviewReport",
       },
     ],
   },

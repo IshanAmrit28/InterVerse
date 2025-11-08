@@ -1,4 +1,4 @@
-const OOPS = require("../models/ooProgramming");
+const OOPS = require("../models/oopModel");
 
 const SubjectController = require("./subjectController");
 

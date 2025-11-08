@@ -1,4 +1,4 @@
-const DBMS = require("../models/dbms");
+const DBMS = require("../models/dbmsModel");
 
 const SubjectController = require("./subjectController");
 

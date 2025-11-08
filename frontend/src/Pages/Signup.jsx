@@ -2,6 +2,7 @@ import { useState } from "react";
 import { MdEmail } from "react-icons/md";
 import { RiLockPasswordFill } from "react-icons/ri";
 import { FaUser } from "react-icons/fa";
+import { useNavigate, Link } from "react-router-dom"; // ✅ Import navigation
 import illustration from "/illustration.png";
 
 const Signup = () => {
@@ -13,8 +14,9 @@ const Signup = () => {
     role: "candidate", // Default role
   });
 
+  const navigate = useNavigate();
+
   const handleChange = (e) => {
-    // Use 'name' attribute to update state, which is standard for radio groups
     const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
@@ -24,12 +26,17 @@ const Signup = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Form Submitted:", formData);
+
+    // Password validation
     if (formData.password !== formData.confirmPassword) {
       alert("Passwords do not match!");
       return;
     }
-    // Add your API submission logic here
+
+    console.log("Form Submitted:", formData);
+
+    // ✅ After successful signup, redirect to login
+    navigate("/login");
   };
 
   return (
@@ -53,7 +60,7 @@ const Signup = () => {
                 <input
                   type="text"
                   id="name"
-                  name="name" // Add name attribute
+                  name="name"
                   placeholder="Enter your name"
                   value={formData.name}
                   onChange={handleChange}
@@ -75,7 +82,7 @@ const Signup = () => {
                     value="candidate"
                     checked={formData.role === "candidate"}
                     onChange={handleChange}
-                    className="w-4 h-4 cursor-pointer text-[#6666e9] bg-gray-700 border-gray-600 "
+                    className="w-4 h-4 cursor-pointer text-[#6666e9] bg-gray-700 border-gray-600"
                   />
                   <label
                     htmlFor="candidate"
@@ -92,7 +99,7 @@ const Signup = () => {
                     value="recruiter"
                     checked={formData.role === "recruiter"}
                     onChange={handleChange}
-                    className="w-4 h-4 cursor-pointer text-[#6666e9] bg-gray-700 border-gray-600 "
+                    className="w-4 h-4 cursor-pointer text-[#6666e9] bg-gray-700 border-gray-600"
                   />
                   <label
                     htmlFor="recruiter"
@@ -116,7 +123,7 @@ const Signup = () => {
                 <input
                   type="email"
                   id="email"
-                  name="email" // Add name attribute
+                  name="email"
                   placeholder="Enter your email"
                   value={formData.email}
                   onChange={handleChange}
@@ -138,7 +145,7 @@ const Signup = () => {
                 <input
                   type="password"
                   id="password"
-                  name="password" // Add name attribute
+                  name="password"
                   placeholder="Enter password"
                   value={formData.password}
                   onChange={handleChange}
@@ -163,7 +170,7 @@ const Signup = () => {
                 <input
                   type="password"
                   id="confirmPassword"
-                  name="confirmPassword" // Add name attribute
+                  name="confirmPassword"
                   placeholder="Confirm password"
                   value={formData.confirmPassword}
                   onChange={handleChange}
@@ -186,9 +193,12 @@ const Signup = () => {
           <div className="mt-6 text-sm text-gray-400 text-center w-full max-w-md">
             <p>
               Already have an account?{" "}
-              <a href="#" className="text-white hover:underline">
+              <Link
+                to="/login"
+                className="text-white hover:underline transition"
+              >
                 Login
-              </a>
+              </Link>
             </p>
           </div>
         </div>

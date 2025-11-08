@@ -1,7 +1,8 @@
 // --- MeetComponents.jsx ---
 import React from "react";
 
-// --- Icons ---
+// --- Icons (from your Interview component) ---
+// Make sure you have lucide-react installed: npm install lucide-react
 import {
   Mic,
   MicOff,
@@ -13,19 +14,21 @@ import {
   Volume2,
 } from "lucide-react";
 
-// --- ParticipantTile Component ---
+// --- ParticipantTile Component (Updated) ---
 export const ParticipantTile = ({
   name,
   isMuted,
   isCameraOff,
-  isSpeaking,
+  isSpeaking, // New prop
   videoRef = null,
 }) => {
   return (
     <div className="relative w-full h-full bg-gray-800 rounded-lg flex items-center justify-center overflow-hidden">
+      {/* Speaking Indicator */}
       {isSpeaking && (
         <div className="absolute inset-0 border-4 border-blue-500 rounded-lg ring-4 ring-blue-500 ring-opacity-50 animate-pulse" />
       )}
+
       {isCameraOff ? (
         <div className="flex flex-col items-center justify-center">
           <div className="w-24 h-24 bg-gray-600 rounded-full flex items-center justify-center">
@@ -83,12 +86,13 @@ export const ControlBar = ({
   isMicOn,
   isCameraOn,
   interviewStatus,
-  isMicDisabled, // <-- NEW PROP
   onToggleMic,
   onToggleCamera,
   onStartInterview,
   onStopInterview,
 }) => {
+  const isInterviewIdle =
+    interviewStatus === "idle" || interviewStatus === "finished";
   const isInterviewRunning = interviewStatus === "running";
 
   return (
@@ -101,7 +105,6 @@ export const ControlBar = ({
               ? "bg-gray-600 hover:bg-gray-500"
               : "bg-red-600 hover:bg-red-500"
           }
-          disabled={isMicDisabled} // <-- PROP USED HERE
         >
           {isMicOn ? (
             <Mic className="w-5 h-5" />
@@ -125,6 +128,7 @@ export const ControlBar = ({
           )}
         </ControlButton>
 
+        {/* Start/Restart Button */}
         <ControlButton
           onClick={onStartInterview}
           className="bg-blue-600 hover:bg-blue-500 ml-8"
@@ -137,6 +141,7 @@ export const ControlBar = ({
           )}
         </ControlButton>
 
+        {/* Stop Button */}
         <ControlButton
           onClick={onStopInterview}
           className="bg-red-600 hover:bg-red-500"

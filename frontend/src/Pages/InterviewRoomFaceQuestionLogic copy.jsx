@@ -1,6 +1,6 @@
 // --- GoogleMeetSimple.jsx ---
 import React, { useState, useEffect, useRef } from "react";
-// import { useFaceDetection } from "../components/useFaceDetection"; // <-- REMOVED
+import { useFaceDetection } from "../components/useFaceDetection";
 import { ParticipantTile, ControlBar } from "../components/MeetComponents";
 import { fetchAllQuestionsTextOnly } from "../services/fetchQuestions";
 import { XCircle } from "lucide-react";
@@ -11,59 +11,9 @@ const remoteUser = {
   isMuted: true,
 };
 
-// --- Audio "Wake Up" Function (Unchanged) ---
-let audioContextResumed = false;
-function resumeAudioContext(voicesRef) {
-  return new Promise((resolve) => {
-    if (audioContextResumed) {
-      resolve();
-      return;
-    }
-    try {
-      console.log("Attempting to resume audio context...");
-      const context = window.speechSynthesis;
-      if (!context) {
-        console.error("Speech Synthesis API not found.");
-        resolve();
-        return;
-      }
-
-      if (context.speaking) {
-        context.cancel(); // Clear any errors
-      }
-
-      // Speak a silent space to activate
-      const utter = new SpeechSynthesisUtterance(" ");
-      utter.volume = 0;
-      utter.onstart = () => {
-        console.log("Audio context successfully resumed.");
-        audioContextResumed = true;
-        resolve();
-      };
-      utter.onerror = (e) => {
-        console.error("Silent utterance error, audio may not work:", e);
-        resolve(); // Resolve anyway so we don't block the app
-      };
-      context.speak(utter);
-
-      if (context.getVoices().length === 0) {
-        context.onvoiceschanged = () => {
-          console.log("Voices loaded on change.");
-          if (voicesRef) {
-            voicesRef.current = context.getVoices();
-          }
-        };
-      }
-    } catch (e) {
-      console.error("Error resuming audio context:", e);
-      resolve(); // Resolve anyway
-    }
-  });
-}
-
 export default function GoogleMeetSimple() {
   // --- Media State ---
-  const [isMicOn, setIsMicOn] = useState(false);
+  const [isMicOn, setIsMicOn] = useState(true);
   const [isCameraOn, setIsCameraOn] = useState(true);
   const [stream, setStream] = useState(null);
   const videoRef = useRef(null);
@@ -71,7 +21,7 @@ export default function GoogleMeetSimple() {
   // --- Interview State ---
   const [questions, setQuestions] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [interviewStatus, setInterviewStatus] = useState("idle"); // idle, awaiting_ready, running, finished
+  const [interviewStatus, setInterviewStatus] = useState("idle");
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(-1);
   const [transcript, setTranscript] = useState("");
   const [isListening, setIsListening] = useState(false);
@@ -85,20 +35,19 @@ export default function GoogleMeetSimple() {
   const voicesRef = useRef([]);
   const questionIndexRef = useRef(currentQuestionIndex);
   const transcriptRef = useRef("");
-  const retryRef = useRef(0);
-  const isSpeakingRef = useRef(false);
 
   // --- Hook for Face Detection ---
-  // const { faceMapRef, clearFaceMap } = useFaceDetection(isCameraOn, videoRef); // <-- REMOVED
+  const { faceMapRef, clearFaceMap } = useFaceDetection(isCameraOn, videoRef);
 
   // --- Sync ref with state ---
   useEffect(() => {
     questionIndexRef.current = currentQuestionIndex;
   }, [currentQuestionIndex]);
 
-  // --- 1. Load Questions (Unchanged) ---
+  // --- 1. Load Questions ---
   useEffect(() => {
     const fetchQuestions = async () => {
+      // ... (This logic is unchanged)
       setIsLoading(true);
       setError("");
       try {
@@ -109,7 +58,9 @@ export default function GoogleMeetSimple() {
         ];
 
         if (fetchedQuestions.length === 0 && behavioralQuestions.length === 0) {
-          setError("Could not load any questions. Please check API/network.");
+          setError(
+            "Could not load any questions. Please check the API and network."
+          );
           setStatusMessage("Error loading questions.");
         } else {
           setQuestions([...fetchedQuestions, ...behavioralQuestions]);
@@ -126,11 +77,10 @@ export default function GoogleMeetSimple() {
     fetchQuestions();
   }, []);
 
-  // --- 2. Setup Speech Recognition & Synthesis (Unchanged) ---
+  // --- 2. Setup Speech Recognition & Synthesis ---
   useEffect(() => {
     const loadVoices = () => {
       voicesRef.current = window.speechSynthesis.getVoices();
-      console.log("Voices loaded:", voicesRef.current.length);
     };
     if (window.speechSynthesis) {
       loadVoices();
@@ -151,11 +101,9 @@ export default function GoogleMeetSimple() {
     recognition.lang = "en-US";
 
     recognition.onstart = () => {
-      console.log("Event: onstart");
       setIsListening(true);
       setStatusMessage("Listening...");
       setError("");
-      retryRef.current = 0;
     };
 
     recognition.onresult = (event) => {
@@ -165,49 +113,58 @@ export default function GoogleMeetSimple() {
           finalTranscript += event.results[i][0].transcript;
         }
       }
-      console.log("Event: onresult", finalTranscript);
       setTranscript(finalTranscript);
       transcriptRef.current = finalTranscript;
     };
 
     recognition.onend = () => {
-      console.log("Event: onend");
       setIsListening(false);
 
-      if (interviewStatus !== "running" && interviewStatus !== "awaiting_ready")
+      // Only proceed if the interview is supposed to be running
+      if (interviewStatus !== "running") {
         return;
+      }
 
-      if (isMicOn === true && !transcriptRef.current) {
-        if (retryRef.current < 2) {
-          retryRef.current += 1;
-          setStatusMessage(`Didn't catch that... (${retryRef.current})`);
-          console.log("No speech detected, restarting listening.");
-          setTimeout(() => startListeningForAnswer(), 500);
-        } else {
-          setStatusMessage("Mic timed out. Skipping.");
-          console.log("Mic timed out, auto-advancing.");
-          retryRef.current = 0;
-          transcriptRef.current = "";
-          setIsMicOn(false);
-        }
+      if (transcriptRef.current) {
+        setStatusMessage("Processing answer...");
+        setInterviewData((prevData) => [
+          ...prevData,
+          {
+            question: questions[questionIndexRef.current],
+            answer: transcriptRef.current,
+          },
+        ]);
+        transcriptRef.current = "";
+        setTimeout(() => {
+          askNextQuestion();
+        }, 1000);
+      } else {
+        // No answer was recorded (e.g., 'no-speech' timeout)
+        setStatusMessage("Didn't catch that. Listening again...");
+        console.log("No speech detected, restarting listening.");
+        setTimeout(() => {
+          startListeningForAnswer(); // Just listen again
+        }, 500);
       }
     };
 
     recognition.onerror = (event) => {
-      console.error("Event: onerror", event.error);
       setIsListening(false);
+
       if (event.error === "no-speech") {
-        console.warn("Speech error: no-speech. 'onend' will handle it.");
+        // 'onend' will handle this, so just log it.
+        console.warn("Speech error: no-speech");
       } else if (event.error === "audio-capture") {
         setError("Audio capture error. Is your microphone working?");
         handleStopInterview();
       } else if (event.error === "not-allowed") {
         setError(
-          "Microphone permission denied. Please allow access & restart."
+          "Microphone permission was denied. Please allow access and restart."
         );
         handleStopInterview();
       } else {
         setError(`Speech error: ${event.error}.`);
+        console.error("Speech Recognition Error:", event.error);
       }
     };
 
@@ -221,19 +178,22 @@ export default function GoogleMeetSimple() {
         recognitionRef.current.stop();
       }
     };
-  }, [questions, interviewStatus, isMicOn]);
+  }, [questions, interviewStatus]); // Keep interviewStatus dependency
 
-  // --- 3. Media Stream Logic (Unchanged) ---
+  // --- 3. Media Stream Logic ---
   useEffect(() => {
+    // ... (This logic is unchanged)
     const startLocalVideo = async () => {
       try {
         const localStream = await navigator.mediaDevices.getUserMedia({
           video: true,
+          audio: true,
         });
         setStream(localStream);
         if (videoRef.current) {
           videoRef.current.srcObject = localStream;
         }
+        localStream.getAudioTracks()[0].enabled = isMicOn;
       } catch (err) {
         console.error("Error starting video:", err);
         setIsCameraOn(false);
@@ -264,83 +224,87 @@ export default function GoogleMeetSimple() {
     };
   }, [isCameraOn]);
 
-  // --- 4. Interview Helper Functions (Unchanged) ---
+  // Mic Toggle Effect
+  useEffect(() => {
+    // ... (This logic is unchanged)
+    if (stream) {
+      const audioTracks = stream.getAudioTracks();
+      if (audioTracks.length > 0) {
+        audioTracks[0].enabled = isMicOn;
+      }
+    }
+  }, [isMicOn, stream]);
+
+  // --- 4. Interview Helper Functions ---
   const speakQuestion = (text) => {
     return new Promise((resolve) => {
+      // ... (This logic is unchanged)
       if (!window.speechSynthesis) {
-        console.error("Speech Synthesis not supported.");
         resolve();
         return;
       }
-
-      if (isSpeakingRef.current) {
-        console.warn(
-          "speakQuestion called while already speaking. Interrupting old speech."
-        );
-        window.speechSynthesis.cancel();
-      }
-
+      window.speechSynthesis.cancel();
       const utter = new SpeechSynthesisUtterance(text);
-      const voices =
-        voicesRef.current.length > 0
-          ? voicesRef.current
-          : window.speechSynthesis.getVoices();
-
-      if (voices.length === 0) {
-        console.warn("No voices available. Using default.");
-      }
-
+      const voices = voicesRef.current || [];
       utter.voice =
         voices.find(
           (v) => v.lang.includes("en-US") && v.name.includes("Google")
-        ) ||
-        voices.find((v) => v.lang.includes("en-US")) ||
-        null;
+        ) || voices.find((v) => v.lang.includes("en-US"));
 
-      utter.onstart = () => {
-        isSpeakingRef.current = true;
-        setIsInterviewerSpeaking(true);
-      };
+      utter.onstart = () => setIsInterviewerSpeaking(true);
       utter.onend = () => {
-        isSpeakingRef.current = false;
         setIsInterviewerSpeaking(false);
         resolve();
       };
-      utter.onerror = (e) => {
-        console.error("SpeechSynthesis Error:", e);
-        isSpeakingRef.current = false;
+      utter.onerror = () => {
         setIsInterviewerSpeaking(false);
-        resolve(); // Resolve anyway
+        resolve();
       };
       window.speechSynthesis.speak(utter);
     });
   };
 
+  // --- startListeningForAnswer (UPDATED) ---
   const startListeningForAnswer = () => {
-    if (!recognitionRef.current) {
-      console.error("Recognition not initialized.");
+    // Check main conditions
+    if (!recognitionRef.current || interviewStatus !== "running") {
       return;
     }
-    if (isListening) {
-      console.warn("startListeningForAnswer called but already listening.");
-      return;
-    }
+
+    // --- FIX ---
+    // Always call stop() first to abort any previous state.
+    // This is the most reliable way to prevent InvalidStateError.
     try {
-      console.log("Calling recognition.start()...");
-      recognitionRef.current.start();
+      recognitionRef.current.stop();
     } catch (e) {
-      console.error("Error calling recognition.start():", e);
-      if (e.name === "InvalidStateError") {
-        console.warn("Caught InvalidStateError. Aborting...");
-        recognitionRef.current.abort(); // Use abort
-      } else {
-        setError("Failed to start listening. Please try again.");
-        handleStopInterview();
-      }
+      // This is fine, it just means it wasn't running.
+      console.warn("Pre-emptive stop warning (ignorable):", e.message);
     }
+    // -----------
+
+    // We add a tiny delay to ensure the 'stop' command has
+    // fully propagated before we call 'start'.
+    setTimeout(() => {
+      if (interviewStatus !== "running" || !recognitionRef.current) return;
+
+      try {
+        recognitionRef.current.start();
+      } catch (e) {
+        console.error("FATAL: Error calling recognition.start():", e);
+        if (e.name === "InvalidStateError") {
+          console.warn(
+            "Still got InvalidStateError, speech system may be broken."
+          );
+        }
+        setError("Failed to start listening. Please try again.");
+        handleStopInterview(); // Stop fully if we can't recover
+      }
+    }, 100); // 100ms delay
   };
 
+  // askNextQuestion
   const askNextQuestion = () => {
+    // ... (This logic is unchanged)
     setCurrentQuestionIndex((prevIndex) => {
       const nextIndex = prevIndex + 1;
       if (nextIndex < questions.length) {
@@ -352,8 +316,7 @@ export default function GoogleMeetSimple() {
           `Q${nextIndex + 1}: ${nextQuestion.substring(0, 40)}...`
         );
         speakQuestion(nextQuestion).then(() => {
-          setStatusMessage("Your turn. Click the mic to answer.");
-          setIsMicOn(false);
+          startListeningForAnswer();
         });
         return nextIndex;
       } else {
@@ -361,17 +324,18 @@ export default function GoogleMeetSimple() {
         setStatusMessage(
           "Interview complete! Check the console for your report."
         );
-        setIsMicOn(false);
         return prevIndex;
       }
     });
   };
 
-  // --- 5. Report Logging Function (UPDATED) ---
+  // --- 5. Report Logging Function ---
   const logFinalReport = () => {
+    // ... (This logic is unchanged)
     console.log("========================================");
     console.log("--- 🎤 FINAL INTERVIEW REPORT ---");
     console.log("========================================");
+
     if (interviewData.length > 0) {
       console.log("\n--- 💬 Interview Transcript ---");
       interviewData.forEach((item, index) => {
@@ -383,143 +347,70 @@ export default function GoogleMeetSimple() {
       console.log("No answers were recorded.");
     }
 
-    // --- All face-api logging logic is REMOVED ---
-
+    const faceResult = {};
+    if (faceMapRef.current && faceMapRef.current.size > 0) {
+      for (let [face, expMap] of faceMapRef.current.entries()) {
+        faceResult[face] = Object.fromEntries(expMap.entries());
+      }
+      console.log("\n--- 🙂 Facial Expression Summary ---");
+      console.log(faceResult);
+    } else {
+      console.log("\n--- 🙂 Facial Expression Summary ---");
+      console.log("No facial expressions were detected.");
+    }
     console.log("========================================");
   };
 
-  // --- 6. Effect to Log Report (Unchanged) ---
+  // --- 6. Effect to Log Report ---
   useEffect(() => {
+    // ... (This logic is unchanged)
     if (interviewStatus === "finished") {
       logFinalReport();
     }
   }, [interviewStatus]);
 
-  // --- 7. Effect for Manual Mic Control (Unchanged) ---
-  useEffect(() => {
-    if (!recognitionRef.current) return;
-
-    const validStatus =
-      interviewStatus === "running" || interviewStatus === "awaiting_ready";
-    if (!validStatus || isInterviewerSpeaking) {
-      if (isMicOn) setIsMicOn(false);
-      if (isListening) {
-        console.warn("Stopping recognition due to status change.");
-        recognitionRef.current.stop();
-        setIsListening(false);
-      }
-      return;
-    }
-
-    if (isMicOn) {
-      if (!isListening) {
-        startListeningForAnswer();
-      }
-    } else {
-      if (isListening) {
-        console.log("User toggled mic off. Stopping recognition.");
-        recognitionRef.current.stop();
-        setIsListening(false);
-
-        if (interviewStatus === "awaiting_ready") {
-          handleReadyCheck(transcriptRef.current);
-        } else if (interviewStatus === "running") {
-          handleAnswer(transcriptRef.current);
-        }
-      }
-    }
-  }, [isMicOn, interviewStatus, isInterviewerSpeaking, isListening]);
-
-  // --- 8. Control Handlers (UPDATED) ---
-
-  const handleReadyCheck = (text) => {
-    const response = text.toLowerCase();
-    transcriptRef.current = "";
-    setTranscript("");
-
-    if (response.includes("yes") || response.includes("ready")) {
-      speakQuestion("Okay, so let's begin.").then(() => {
-        setInterviewStatus("running");
-        askNextQuestion(); // Asks Q1
-      });
-    } else {
-      speakQuestion(
-        "Sorry, I didn't catch that. Please say 'yes' when you are ready."
-      ).then(() => {
-        setStatusMessage("Click the mic to respond.");
-        setIsMicOn(false);
-      });
-    }
-  };
-
-  const handleAnswer = (text) => {
-    if (text) {
-      setStatusMessage("Processing answer...");
-      setInterviewData((prevData) => [
-        ...prevData,
-        {
-          question: questions[questionIndexRef.current],
-          answer: text,
-        },
-      ]);
-    } else {
-      setStatusMessage("Answer skipped. Next question...");
-    }
-    transcriptRef.current = "";
-    setTranscript("");
-    setTimeout(() => askNextQuestion(), 1000); // Advance to next question
-  };
-
-  const handleStartInterview = async () => {
+  // --- 7. Control Handlers ---
+  const handleStartInterview = () => {
+    // ... (This logic is unchanged)
     if (
       interviewStatus === "running" ||
-      interviewStatus === "awaiting_ready" ||
       isLoading ||
       questions.length === 0 ||
       error
     )
       return;
-
-    await resumeAudioContext(voicesRef);
-
     setInterviewData([]);
-    // clearFaceMap(); // <-- REMOVED
+    clearFaceMap();
+    setInterviewStatus("running");
     setTranscript("");
     setError("");
     setCurrentQuestionIndex(-1);
-    setIsMicOn(false);
-
-    setInterviewStatus("awaiting_ready");
-    const GREETING = "Hello, and welcome to the interview simulator.";
-    const RULES =
-      "I will ask you a question. When I am done speaking, this mic button will be enabled. Click it to start your answer, and click it again when you are finished. I will then ask the next question.";
-    speakQuestion(`${GREETING} ${RULES} Are you ready to begin?`).then(() => {
-      setStatusMessage("Click the mic to respond.");
-    });
+    askNextQuestion();
   };
 
   const handleStopInterview = () => {
+    // ... (This logic is unchanged)
     window.speechSynthesis.cancel();
     if (recognitionRef.current) {
       recognitionRef.current.stop();
     }
-    isSpeakingRef.current = false;
     setIsInterviewerSpeaking(false);
     setIsListening(false);
 
+    // Only log if the interview was actually running
     if (interviewStatus === "running") {
       logFinalReport();
     }
 
     setInterviewStatus("idle");
     setStatusMessage("Interview stopped. Press start to try again.");
-    setIsMicOn(false);
+
     setInterviewData([]);
-    // clearFaceMap(); // <-- REMOVED
+    clearFaceMap();
     setCurrentQuestionIndex(-1);
   };
 
-  // --- 9. JSX (Unchanged) ---
+  // --- 8. JSX ---
   return (
     <div className="flex flex-col h-screen w-screen bg-gray-900 text-white overflow-hidden">
       {/* Main Content Area (2 Panels) */}
@@ -562,14 +453,11 @@ export default function GoogleMeetSimple() {
               ></span>
               <p className="font-medium">{statusMessage}</p>
             </div>
-
             <div className="w-full text-lg text-white truncate">
               <span className="font-semibold text-blue-300 mr-2">A:</span>
-              {isListening ? (
-                <span className="text-gray-500 italic">Listening...</span>
-              ) : (
+              {transcript || (
                 <span className="text-gray-500 italic">
-                  {transcript ? "Answer recorded." : "Mic is off."}
+                  Your answer will appear here...
                 </span>
               )}
             </div>
@@ -582,11 +470,6 @@ export default function GoogleMeetSimple() {
         isMicOn={isMicOn}
         isCameraOn={isCameraOn}
         interviewStatus={interviewStatus}
-        isMicDisabled={
-          (interviewStatus !== "running" &&
-            interviewStatus !== "awaiting_ready") ||
-          isInterviewerSpeaking
-        }
         onToggleMic={() => setIsMicOn(!isMicOn)}
         onToggleCamera={() => setIsCameraOn(!isCameraOn)}
         onStartInterview={handleStartInterview}

@@ -3,8 +3,8 @@ export const fetchAllQuestionsTextOnly = async () => {
     "http://localhost:3000/api/os",
     "http://localhost:3000/api/dbms",
     "http://localhost:3000/api/cn",
+    "http://localhost:3000/api/oops",
   ];
-  // "http://localhost:3000/api/oops",
   const allQuestions = [];
 
   for (const url of urls) {

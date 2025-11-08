@@ -1,13 +1,17 @@
 import { useState } from "react";
 import { MdEmail } from "react-icons/md";
 import { RiLockPasswordFill } from "react-icons/ri";
+import { useNavigate, Link } from "react-router-dom"; // ✅ Import navigation tools
 import illustration from "/illustration.png";
+import { userData } from "../services/userUtil";
 
 const Login = () => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
+
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { id, value } = e.target;
@@ -19,9 +23,13 @@ const Login = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Here you would handle login logic, e.g., API call
     console.log("Login Submitted:", formData);
-    // Add your API submission logic here
+
+    // ✅ Simulate login success
+    userData.isLoggedIn = true;
+
+    // ✅ Navigate to dashboard (or homepage)
+    navigate("/");
   };
 
   return (
@@ -88,9 +96,12 @@ const Login = () => {
           <div className="mt-6 text-sm text-gray-400 text-center w-full max-w-md">
             <p>
               Don’t have an account?{" "}
-              <a href="#" className="text-white hover:underline">
+              <Link
+                to="/signup"
+                className="text-white hover:underline transition"
+              >
                 Sign up
-              </a>
+              </Link>
             </p>
           </div>
         </div>
