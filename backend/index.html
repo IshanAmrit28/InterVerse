@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Application Form</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background-color: #f4f4f4;
+    }
+
+    form {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    div {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    input[type="text"],
+    textarea {
+      width: 100%;
+      padding: 8px;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    input[type="file"] {
+      width: 100%;
+    }
+
+    button {
+      background-color: #007BFF;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h2>Job Application</h2>
+
+  <form action="http://localhost:3000/api/interview/start" method="POST" enctype="multipart/form-data">
+
+    <input type="hidden" id="candidateId" name="candidateId" value="6912c711cabf1fe8c3bd941c">
+
+    <div>
+      <label for="role">Job Role:</label>
+      <input type="text" id="role" name="role" required>
+    </div>
+
+    <div>
+      <label for="jobDescription">Job Description:</label>
+      <textarea id="jobDescription" name="jobDescription" rows="6"></textarea>
+    </div>
+
+    <div>
+      <label for="resume">Upload Resume:</label>
+      <input type="file" id="resume" name="resumeFile" accept=".pdf,.doc,.docx" required>
+    </div>
+
+    <div>
+      <button type="submit">Submit Application</button>
+    </div>
+
+  </form>
+
+</body>
+
+</html>

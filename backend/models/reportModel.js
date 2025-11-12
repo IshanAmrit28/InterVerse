@@ -1,0 +1,43 @@
+import mongoose from "mongoose";
+
+const feedbackSchema = new mongoose.Schema({
+  strengths: [{ type: String }],
+  weaknesses: [{ type: String }],
+});
+
+const questionSchema = new mongoose.Schema({
+  questionId: { type: mongoose.Schema.Types.ObjectId, ref: "Question" },
+  question: { type: String },
+  aiScore: { type: Number, default: null },
+});
+
+const reportStructureSchema = new mongoose.Schema({
+  DBMS: [questionSchema],
+  OS: [questionSchema],
+  CN: [questionSchema],
+  OOP: [questionSchema],
+  resumeBasedQuestions: [questionSchema],
+  ResumeScore: { type: Number, default: 0 },
+  overallScore: { type: Number, default: 0 },
+  feedbackOnInterviewAnswers: feedbackSchema,
+  feedbackOnResume: feedbackSchema,
+  hiringChance: { type: String },
+});
+
+const reportSchema = new mongoose.Schema(
+  {
+    candidateId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    role: { type: String },
+    jobDescription: { type: String },
+    resume: { type: String },
+    reportStructure: reportStructureSchema,
+  },
+  { timestamps: true }
+);
+
+const Report = mongoose.model("Report", reportSchema);
+export default Report;
