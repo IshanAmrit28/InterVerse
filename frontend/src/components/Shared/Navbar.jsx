@@ -1,5 +1,6 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+//frontend\src\components\Shared\Navbar.jsx
+import React from "react";
+import { Link } from "react-router-dom";
 
 /**
  * A reusable public-facing navbar for the Landing Page, About Page, etc.
@@ -9,11 +10,14 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-50 flex justify-center border-b border-solid border-gray-700/50 bg-gray-900/80 backdrop-blur-sm">
       <div className="flex w-full max-w-[1440px] items-center justify-between px-10 py-4">
-        
         {/* Logo/Title linked to Home */}
         <Link to="/" className="flex items-center gap-4 text-white">
           <div className="size-6 text-blue-500">
-            <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+            <svg
+              fill="none"
+              viewBox="0 0 48 48"
+              xmlns="http://www.w3.org/2000/svg"
+            >
               <path
                 d="M39.5563 34.1455V13.8546C39.5563 15.708 36.8773 17.3437 32.7927 18.3189C30.2914 18.916 27.263 19.2655 24 19.2655C20.737 19.2655 17.7086 18.916 15.2073 18.3189C11.1227 17.3437 8.44365 15.708 8.44365 13.8546V34.1455C8.44365 35.9988 11.1227 37.6346 15.2073 38.6098C17.7086 39.2069 20.737 39.5564 24 39.5564C27.263 39.5564 30.2914 39.2069 32.7927 38.6098C36.8773 37.6346 39.5563 35.9988 39.5563 34.1455Z"
                 fill="currentColor"
@@ -26,24 +30,52 @@ export default function Navbar() {
               ></path>
             </svg>
           </div>
-          <h2 className="text-xl font-bold leading-tight tracking-[-0.015em] font-heading">Smart Interview Coach</h2>
+          <h2 className="text-xl font-bold leading-tight tracking-[-0.015em] font-heading">
+            Smart Interview Coach
+          </h2>
         </Link>
 
         {/* Navigation and Auth Links */}
         <div className="flex items-center gap-6">
           <nav className="flex items-center gap-6">
-            <Link className="text-sm font-medium leading-normal text-white hover:text-blue-400 transition-colors" to="/">Home</Link>
-            <Link className="text-sm font-medium leading-normal text-white hover:text-blue-400 transition-colors" to="/practice">Practice</Link>
-            <Link className="text-sm font-medium leading-normal text-white hover:text-blue-400 transition-colors" to="/dashboard">Dashboard</Link>
-            <Link className="text-sm font-medium leading-normal text-white hover:text-blue-400 transition-colors" to="/report">Reports</Link>
+            <Link
+              className="text-sm font-medium leading-normal text-white hover:text-blue-400 transition-colors"
+              to="/"
+            >
+              Home
+            </Link>
+            <Link
+              className="text-sm font-medium leading-normal text-white hover:text-blue-400 transition-colors"
+              to="/practice"
+            >
+              Practice
+            </Link>
+            <Link
+              className="text-sm font-medium leading-normal text-white hover:text-blue-400 transition-colors"
+              to="/dashboard"
+            >
+              Dashboard
+            </Link>
+            <Link
+              className="text-sm font-medium leading-normal text-white hover:text-blue-400 transition-colors"
+              to="/report"
+            >
+              Reports
+            </Link>
           </nav>
           <div className="flex items-center gap-2">
             {/* Login Button */}
-            <Link to="/login" className="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-gray-800 text-white text-sm font-bold leading-normal tracking-[0.015em] hover:bg-gray-700 transition-colors">
+            <Link
+              to="/login"
+              className="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-gray-800 text-white text-sm font-bold leading-normal tracking-[0.015em] hover:bg-gray-700 transition-colors"
+            >
               <span className="truncate">Login</span>
             </Link>
             {/* Sign Up Button */}
-            <Link to="/signup" className="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-blue-500 text-gray-900 text-sm font-bold leading-normal tracking-[0.015em] hover:opacity-90 transition-opacity">
+            <Link
+              to="/signup"
+              className="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-blue-500 text-gray-900 text-sm font-bold leading-normal tracking-[0.015em] hover:opacity-90 transition-opacity"
+            >
               <span className="truncate">Sign Up</span>
             </Link>
           </div>

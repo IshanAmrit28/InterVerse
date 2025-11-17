@@ -1,10 +1,14 @@
-import { Link } from 'react-router-dom';
+//frontend\src\components\Dashboard.jsx
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { LogOut } from "lucide-react";
+
 /**
  * Sidebar navigation component for the Dashboard.
  */
 function Sidebar() {
   return (
-    <aside className="sticky top-0 flex h-screen w-64 flex-col bg-gray-800 p-4">
+    <aside className="sticky top-0 flex h-screen w-64 flex-shrink-0 flex-col justify-between bg-gray-800 p-4">
       <div className="flex flex-col gap-4">
         <div className="flex items-center gap-3 p-2">
           <div
@@ -16,8 +20,12 @@ function Sidebar() {
             }}
           ></div>
           <div className="flex flex-col">
-            <h1 className="font-heading text-base font-medium leading-normal text-white">Samantha Lee</h1>
-            <p className="text-sm font-normal leading-normal text-gray-400">Pro Member</p>
+            <h1 className="font-heading text-base font-medium leading-normal text-white">
+              Samantha Lee
+            </h1>
+            <p className="text-sm font-normal leading-normal text-gray-400">
+              Pro Member
+            </p>
           </div>
         </div>
         <nav className="mt-4 flex flex-col gap-2">
@@ -41,6 +49,16 @@ function Sidebar() {
           </Link>
         </nav>
       </div>
+
+      <div className="flex flex-col">
+        <Link
+          className="flex items-center gap-3 rounded-lg px-3 py-4 text-white transition-colors duration-200 hover:bg-white/10"
+          to="/"
+        >
+          <LogOut size={18} />
+          <p className="text-sm font-medium leading-normal">Logout</p>
+        </Link>
+      </div>
     </aside>
   );
 }
@@ -50,6 +68,58 @@ function Sidebar() {
  * Displays stats, progress chart, and practice history.
  */
 function DashboardContent() {
+  const [practiceHistory, setPracticeHistory] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Fetch practice history from API
+    const fetchPracticeHistory = async () => {
+      try {
+        // Replace with your actual API endpoint
+        const response = await fetch("/api/practice-history");
+        const data = await response.json();
+        setPracticeHistory(data);
+      } catch (error) {
+        console.error("Error fetching practice history:", error);
+        // Use mock data if API fails
+        setPracticeHistory([
+          {
+            _id: "691b52cc4af956566a50b65e",
+            date: "Oct 28, 2023",
+            topic: "System Design",
+            mode: "AI Mock",
+            score: 88,
+          },
+          {
+            _id: "691b52cc4af956566a50b65f",
+            date: "Oct 25, 2023",
+            topic: "Behavioral",
+            mode: "Timed Quiz",
+            score: 76,
+          },
+          {
+            _id: "691b52cc4af956566a50b660",
+            date: "Oct 22, 2023",
+            topic: "Data Structures",
+            mode: "AI Mock",
+            score: 92,
+          },
+          {
+            _id: "691b52cc4af956566a50b661",
+            date: "Oct 19, 2023",
+            topic: "Algorithms",
+            mode: "Peer Review",
+            score: 81,
+          },
+        ]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPracticeHistory();
+  }, []);
+
   return (
     <main className="flex-1 p-8">
       <div className="mx-auto max-w-7xl">
@@ -59,38 +129,68 @@ function DashboardContent() {
             Welcome back, Samantha 👋
           </h1>
         </div>
+
         {/* Stats */}
         <div className="mb-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           <div className="flex flex-1 flex-col gap-2 rounded-xl border border-gray-700 bg-gray-800 p-6">
-            <p className="text-base font-medium leading-normal text-white">Average Score</p>
+            <p className="text-base font-medium leading-normal text-white">
+              Average Score
+            </p>
             <p className="text-3xl font-bold leading-tight text-white">82%</p>
-            <p className="text-base font-medium leading-normal text-green-500">+5.2%</p>
+            <p className="text-base font-medium leading-normal text-green-500">
+              +5.2%
+            </p>
           </div>
           <div className="flex flex-1 flex-col gap-2 rounded-xl border border-gray-700 bg-gray-800 p-6">
-            <p className="text-base font-medium leading-normal text-white">Sessions Completed</p>
+            <p className="text-base font-medium leading-normal text-white">
+              Sessions Completed
+            </p>
             <p className="text-3xl font-bold leading-tight text-white">28</p>
-            <p className="text-base font-medium leading-normal text-green-500">+12.0%</p>
+            <p className="text-base font-medium leading-normal text-green-500">
+              +12.0%
+            </p>
           </div>
           <div className="flex flex-1 flex-col gap-2 rounded-xl border border-gray-700 bg-gray-800 p-6">
-            <p className="text-base font-medium leading-normal text-white">Top Skill</p>
-            <p className="truncate text-3xl font-bold leading-tight text-white">System Design</p>
-            <p className="text-base font-medium leading-normal text-gray-400">Previous: Behavioral</p>
+            <p className="text-base font-medium leading-normal text-white">
+              Top Skill
+            </p>
+            <p className="truncate text-3xl font-bold leading-tight text-white">
+              System Design
+            </p>
+            <p className="text-base font-medium leading-normal text-gray-400">
+              Previous: Behavioral
+            </p>
           </div>
           <div className="flex flex-1 flex-col gap-2 rounded-xl border border-gray-700 bg-gray-800 p-6">
-            <p className="text-base font-medium leading-normal text-white">Time Practicing</p>
-            <p className="text-3xl font-bold leading-tight text-white">14h 32m</p>
-            <p className="text-base font-medium leading-normal text-green-500">+8.5%</p>
+            <p className="text-base font-medium leading-normal text-white">
+              Time Practicing
+            </p>
+            <p className="text-3xl font-bold leading-tight text-white">
+              14h 32m
+            </p>
+            <p className="text-base font-medium leading-normal text-green-500">
+              +8.5%
+            </p>
           </div>
         </div>
+
         {/* Chart */}
         <div className="mb-8 flex flex-wrap gap-4 py-6">
           <div className="flex w-full flex-1 flex-col gap-2 rounded-xl border border-gray-700 bg-gray-800 p-6">
-            <p className="font-heading text-lg font-medium leading-normal text-white">Progress Over Time</p>
+            <p className="font-heading text-lg font-medium leading-normal text-white">
+              Progress Over Time
+            </p>
             <div className="flex items-baseline gap-4">
-              <p className="text-4xl font-bold leading-tight tracking-light text-white">82%</p>
+              <p className="text-4xl font-bold leading-tight tracking-light text-white">
+                82%
+              </p>
               <div className="flex gap-1">
-                <p className="text-base font-normal leading-normal text-gray-400">Last 30 Days</p>
-                <p className="text-base font-medium leading-normal text-green-500">+5.2%</p>
+                <p className="text-base font-normal leading-normal text-gray-400">
+                  Last 30 Days
+                </p>
+                <p className="text-base font-medium leading-normal text-green-500">
+                  +5.2%
+                </p>
               </div>
             </div>
             <div className="flex min-h-[220px] flex-1 flex-col gap-8 py-4">
@@ -127,14 +227,23 @@ function DashboardContent() {
                 </defs>
               </svg>
               <div className="-mt-4 flex justify-around">
-                <p className="text-sm font-medium leading-normal text-gray-400">Week 1</p>
-                <p className="text-sm font-medium leading-normal text-gray-400">Week 2</p>
-                <p className="text-sm font-medium leading-normal text-gray-400">Week 3</p>
-                <p className="text-sm font-medium leading-normal text-gray-400">Week 4</p>
+                <p className="text-sm font-medium leading-normal text-gray-400">
+                  Week 1
+                </p>
+                <p className="text-sm font-medium leading-normal text-gray-400">
+                  Week 2
+                </p>
+                <p className="text-sm font-medium leading-normal text-gray-400">
+                  Week 3
+                </p>
+                <p className="text-sm font-medium leading-normal text-gray-400">
+                  Week 4
+                </p>
               </div>
             </div>
           </div>
         </div>
+
         {/* SectionHeader + Table */}
         <div className="flex flex-col">
           <h2 className="font-heading text-2xl font-bold leading-tight tracking-tight text-white px-2 pb-3 pt-5">
@@ -160,66 +269,80 @@ function DashboardContent() {
                     <th className="px-6 py-4 text-sm font-semibold uppercase tracking-wider text-gray-400">
                       Report
                     </th>
-T                  </tr>
+                  </tr>
                 </thead>
                 <tbody>
-                  <tr className="border-b border-gray-700 transition-colors duration-200 hover:bg-white/5">
-                    <td className="whitespace-nowrap px-6 py-4 text-gray-300">Oct 28, 2023</td>
-                    <td className="whitespace-nowrap px-6 py-4 text-gray-300">System Design</td>
-                    <td className="whitespace-nowrap px-6 py-4 text-gray-300">AI Mock</td>
-                    <td className="whitespace-nowrap px-6 py-4 text-gray-300">88%</td>
-                    <td className="whitespace-nowrap px-6 py-4">
-                      <a className="font-medium text-blue-500 hover:underline" href="#">
-                        View Report
-                      </a>
-                    </td>
-                  </tr>
-                  <tr className="border-b border-gray-700 transition-colors duration-200 hover:bg-white/5">
-                    <td className="whitespace-nowrap px-6 py-4 text-gray-300">Oct 25, 2023</td>
-                    <td className="whitespace-nowrap px-6 py-4 text-gray-300">Behavioral</td>
-                    <td className="whitespace-nowrap px-6 py-4 text-gray-300">Timed Quiz</td>
-                    <td className="whitespace-nowrap px-6 py-4 text-gray-300">76%</td>
-                    <td className="whitespace-nowrap px-6 py-4">
-                      <a className="font-medium text-blue-500 hover:underline" href="#">
-                        View Report
-                      </a>
-                    </td>
-                  </tr>
-                  <tr className="border-b border-gray-700 transition-colors duration-200 hover:bg-white/5">
-                    <td className="whitespace-nowrap px-6 py-4 text-gray-300">Oct 22, 2023</td>
-                    <td className="whitespace-nowrap px-6 py-4 text-gray-300">Data Structures</td>
-                    <td className="whitespace-nowrap px-6 py-4 text-gray-300">AI Mock</td>
-                    <td className="whitespace-nowrap px-6 py-4 text-gray-300">92%</td>
-                    <td className="whitespace-nowrap px-6 py-4">
-                      <a className="font-medium text-blue-500 hover:underline" href="#">
-                        View Report
-                      </a>
-                    </td>
-                  </tr>
-                  <tr className="transition-colors duration-200 hover:bg-white/5">
-                    <td className="whitespace-nowrap px-6 py-4 text-gray-300">Oct 19, 2023</td>
-                    <td className="whitespace-nowrap px-6 py-4 text-gray-300">Algorithms</td>
-                    <td className="whitespace-nowrap px-6 py-4 text-gray-300">Peer Review</td>
-                    <td className="whitespace-nowrap px-6 py-4 text-gray-300">81%</td>
-                    <td className="whitespace-nowrap px-6 py-4">
-                      <a className="font-medium text-blue-500 hover:underline" href="#">
-                        View Report
-                      </a>
-                    </td>
-                  </tr>
+                  {loading ? (
+                    <tr>
+                      <td
+                        colSpan="5"
+                        className="px-6 py-8 text-center text-gray-400"
+                      >
+                        Loading practice history...
+                      </td>
+                    </tr>
+                  ) : practiceHistory.length === 0 ? (
+                    <tr>
+                      <td
+                        colSpan="5"
+                        className="px-6 py-8 text-center text-gray-400"
+                      >
+                        No practice history available
+                      </td>
+                    </tr>
+                  ) : (
+                    practiceHistory.map((practice, index) => (
+                      <tr
+                        key={practice._id || index}
+                        className={`border-b border-gray-700 transition-colors duration-200 hover:bg-white/5 ${
+                          index === practiceHistory.length - 1
+                            ? "border-b-0"
+                            : ""
+                        }`}
+                      >
+                        <td className="whitespace-nowrap px-6 py-4 text-gray-300">
+                          {practice.date}
+                        </td>
+                        <td className="whitespace-nowrap px-6 py-4 text-gray-300">
+                          {practice.topic}
+                        </td>
+                        <td className="whitespace-nowrap px-6 py-4 text-gray-300">
+                          {practice.mode}
+                        </td>
+                        <td className="whitespace-nowrap px-6 py-4 text-gray-300">
+                          {practice.score}%
+                        </td>
+                        <td className="whitespace-nowrap px-6 py-4">
+                          <Link
+                            to={`/report/${practice._id}`}
+                            className="font-medium text-blue-500 hover:underline"
+                          >
+                            View Report
+                          </Link>
+                        </td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>
           </div>
         </div>
+
         {/* Action Buttons */}
         <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
-          <button className="rounded-lg bg-blue-500 px-6 py-3 font-semibold text-white shadow-md transition-colors duration-200 hover:bg-blue-600">
+          <Link
+            to="/practice"
+            className="rounded-lg bg-blue-500 px-6 py-3 font-semibold text-white shadow-md transition-colors duration-200 hover:bg-blue-600"
+          >
             Start New Practice
-          </button>
-          <button className="rounded-lg bg-gray-700 px-6 py-3 font-semibold text-white transition-colors duration-200 hover:bg-gray-600">
+          </Link>
+          <Link
+            to="/reports"
+            className="rounded-lg bg-gray-700 px-6 py-3 font-semibold text-white transition-colors duration-200 hover:bg-gray-600"
+          >
             View All Reports
-          </button>
+          </Link>
           <button className="rounded-lg bg-gray-700 px-6 py-3 font-semibold text-white transition-colors duration-200 hover:bg-gray-600">
             Explore Recommendations
           </button>
@@ -238,10 +361,7 @@ export default function Dashboard() {
   return (
     <div className="bg-gray-900 font-display text-gray-300">
       <div className="relative flex min-h-screen w-full">
-        {/* SideNavBar */}
         <Sidebar />
-
-        {/* Main Content */}
         <DashboardContent />
       </div>
     </div>

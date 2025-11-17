@@ -1,17 +1,42 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { X } from 'lucide-react';
+//frontend\src\components\PracticeSimulation.jsx
+import React, { useState, useEffect, useRef } from "react"; // Added useEffect and useRef
+import { useNavigate, Link } from "react-router-dom";
+import { X } from "lucide-react";
 
 // NAVBAR
 function PublicNavbar() {
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  const profileMenuRef = useRef(null);
+
+  // Effect to handle clicks outside the profile menu to close it
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (
+        profileMenuRef.current &&
+        !profileMenuRef.current.contains(event.target)
+      ) {
+        setIsProfileMenuOpen(false);
+      }
+    }
+    // Bind the event listener
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      // Unbind the event listener on clean up
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [profileMenuRef]);
+
   return (
     <header className="sticky top-0 z-50 flex justify-center border-b border-solid border-gray-700/50 bg-gray-900/80 backdrop-blur-sm">
       <div className="flex w-full max-w-[1440px] items-center justify-between px-10 py-4">
-        
         {/* Logo/Title linked to Home */}
         <Link to="/" className="flex items-center gap-4 text-white">
           <div className="size-6 text-blue-500">
-            <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+            <svg
+              fill="none"
+              viewBox="0 0 48 48"
+              xmlns="http://www.w3.org/2000/svg"
+            >
               <path
                 d="M39.5563 34.1455V13.8546C39.5563 15.708 36.8773 17.3437 32.7927 18.3189C30.2914 18.916 27.263 19.2655 24 19.2655C20.737 19.2655 17.7086 18.916 15.2073 18.3189C11.1227 17.3437 8.44365 15.708 8.44365 13.8546V34.1455C8.44365 35.9988 11.1227 37.6346 15.2073 38.6098C17.7086 39.2069 20.737 39.5564 24 39.5564C27.263 39.5564 30.2914 39.2069 32.7927 38.6098C36.8773 37.6346 39.5563 35.9988 39.5563 34.1455Z"
                 fill="currentColor"
@@ -24,15 +49,81 @@ function PublicNavbar() {
               ></path>
             </svg>
           </div>
-          <h2 className="text-xl font-bold leading-tight tracking-[-0.015em] font-heading">Smart Interview Coach</h2>
+          <h2 className="text-xl font-bold leading-tight tracking-[-0.015em] font-heading">
+            Smart Interview Coach
+          </h2>
         </Link>
 
         {/* Navigation and Auth Links */}
         <div className="flex items-center gap-6">
           <nav className="flex items-center gap-6">
-            <Link className="text-sm font-medium leading-normal text-white hover:text-blue-400 transition-colors" to="/practice">Practice</Link>
-            <Link className="text-sm font-medium leading-normal text-white hover:text-blue-400 transition-colors" to="/dashboard">Dashboard</Link>
+            <Link
+              className="text-sm font-medium leading-normal text-white hover:text-blue-400 transition-colors"
+              to="/practice"
+            >
+              Practice
+            </Link>
+            <Link
+              className="text-sm font-medium leading-normal text-white hover:text-blue-400 transition-colors"
+              to="/dashboard"
+            >
+              Dashboard
+            </Link>
           </nav>
+
+          {/* Profile Dropdown */}
+          <div className="relative" ref={profileMenuRef}>
+            <button
+              onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
+              className="size-8 rounded-full bg-gray-700 text-gray-300 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900"
+              aria-label="Open user menu"
+              aria-haspopup="true"
+            >
+              {/* Simple User Icon SVG */}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                className="size-5 m-auto"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M10 9a3 3 0 100-6 3 3 0 000 6zM6 8a2 2 0 11-4 0 2 2 0 014 0zM1.49 15.326a.78.78 0 01-.358-.442 3 3 0 014.308-3.516 6.484 6.484 0 00-1.905 3.959c-.023.222-.015.445-.002.668 0 .432.01.863.024 1.294a.75.75 0 01-1.498.055 5.25 5.25 0 01-.002-1.018zM18.51 15.326a.78.78 0 00.358-.442 3 3 0 00-4.308-3.516 6.484 6.484 0 011.905 3.959c.023.222.015.445.002.668 0 .432-.01.863-.024 1.294a.75.75 0 001.498.055 5.25 5.25 0 00.002-1.018zM12.5 8a2 2 0 11-4 0 2 2 0 014 0zM10 12a5 5 0 11-10 0 5 5 0 0110 0zM17 11a1 1 0 100-2 1 1 0 000 2z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </button>
+
+            {/* Dropdown Menu */}
+            {isProfileMenuOpen && (
+              <div
+                className="absolute right-0 mt-2 w-48 origin-top-right rounded-lg bg-gray-800 py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                role="menu"
+                aria-orientation="vertical"
+                aria-labelledby="user-menu-button"
+                tabIndex="-1"
+              >
+                <Link
+                  to="/settings" // Link to settings page
+                  className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700"
+                  role="menuitem"
+                  tabIndex="-1"
+                  onClick={() => setIsProfileMenuOpen(false)} // Close on click
+                >
+                  Profile
+                </Link>
+                <Link
+                  to="/" // Assuming logout goes to home
+                  className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700"
+                  role="menuitem"
+                  tabIndex="-1"
+                  onClick={() => setIsProfileMenuOpen(false)} // Close on click
+                >
+                  Logout
+                </Link>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </header>
@@ -44,8 +135,8 @@ function PublicNavbar() {
  */
 function PreInterviewModal({ onStart, onClose }) {
   // State for the new input fields
-  const [role, setRole] = useState('');
-  const [jobDescription, setJobDescription] = useState('');
+  const [role, setRole] = useState("");
+  const [jobDescription, setJobDescription] = useState("");
 
   return (
     <div className="relative z-10 flex w-full max-w-2xl flex-col items-center rounded-xl bg-gray-800 p-8 shadow-2xl">
@@ -55,18 +146,18 @@ function PreInterviewModal({ onStart, onClose }) {
       >
         <X size={24} />
       </button>
-      
       <h1 className="font-heading text-3xl font-bold leading-tight tracking-tight text-white pb-6 text-center">
         Prepare for Your Interview
       </h1>
       <div className="w-full space-y-6">
-
         {/* --- 1. REMOVED Topic, Difficulty, Mode --- */}
         {/* The grid with the three dropdowns has been removed. */}
 
         {/* --- 2. ADDED "Role" and "Job Description" --- */}
         <label className="flex flex-1 flex-col">
-          <p className="pb-2 text-base font-medium leading-normal text-white">Role</p>
+          <p className="pb-2 text-base font-medium leading-normal text-white">
+            Role
+          </p>
           <input
             type="text"
             value={role}
@@ -75,9 +166,10 @@ function PreInterviewModal({ onStart, onClose }) {
             className="h-14 w-full appearance-none resize-none overflow-hidden rounded-lg border border-gray-700 bg-gray-700 px-4 text-base font-normal leading-normal text-white placeholder-gray-400 transition-colors focus:border-blue-500 focus:outline-0 focus:ring-2 focus:ring-blue-500/50"
           />
         </label>
-        
         <label className="flex flex-1 flex-col">
-          <p className="pb-2 text-base font-medium leading-normal text-white">Job Description</p>
+          <p className="pb-2 text-base font-medium leading-normal text-white">
+            Job Description
+          </p>
           <textarea
             value={jobDescription}
             onChange={(e) => setJobDescription(e.target.value)}
@@ -85,7 +177,6 @@ function PreInterviewModal({ onStart, onClose }) {
             className="h-32 w-full appearance-none resize-none overflow-hidden rounded-lg border border-gray-700 bg-gray-700 p-4 text-base font-normal leading-normal text-white placeholder-gray-400 transition-colors focus:border-blue-500 focus:outline-0 focus:ring-2 focus:ring-blue-500/50"
           ></textarea>
         </label>
-        
         {/* --- 3. MODIFIED "Upload Resume" --- */}
         <div className="flex flex-col">
           {/* Reduced height by changing padding from py-8 to py-4 */}
@@ -103,7 +194,6 @@ function PreInterviewModal({ onStart, onClose }) {
             </button>
           </div>
         </div>
-        
         <div className="flex justify-center pt-2">
           <button
             onClick={onStart}
@@ -124,8 +214,12 @@ function PostInterviewOverlay({ onViewReport }) {
   return (
     <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-black/70 backdrop-blur-sm">
       <div className="rounded-xl bg-gray-800 p-10 text-center shadow-2xl">
-        <h2 className="font-heading text-3xl font-bold text-white mb-2">Well done!</h2>
-        <p className="text-base text-gray-400 mb-6">Your AI performance report is being generated.</p>
+        <h2 className="font-heading text-3xl font-bold text-white mb-2">
+          Well done!
+        </h2>
+        <p className="text-base text-gray-400 mb-6">
+          Your AI performance report is being generated.
+        </p>
         <button
           onClick={onViewReport}
           className="h-12 w-full min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-blue-500 px-5 text-base font-bold leading-normal tracking-[0.015em] text-white transition-opacity hover:opacity-90"
@@ -145,12 +239,17 @@ function RestrictionModal({ onAcknowledge }) {
     <div className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-black/70 backdrop-blur-sm">
       <div className="max-w-md rounded-xl bg-gray-800 p-10 text-center shadow-2xl">
         <div className="mx-auto mb-4 flex size-12 items-center justify-center rounded-full bg-yellow-100">
-          <span className="material-symbols-outlined text-yellow-600">warning</span>
+          <span className="material-symbols-outlined text-yellow-600">
+            warning
+          </span>
         </div>
-        <h2 className="font-heading text-2xl font-bold text-white mb-2">Stay Focused!</h2>
+        <h2 className="font-heading text-2xl font-bold text-white mb-2">
+          Stay Focused!
+        </h2>
         <p className="text-base text-gray-40Ah-6">
-          Leaving the interview window may negatively impact the simulation or your results. Please
-          remain in this tab to ensure an accurate assessment.
+          Leaving the interview window may negatively impact the simulation or
+          your results. Please remain in this tab to ensure an accurate
+          assessment.
         </p>
         <button
           onClick={onAcknowledge}
@@ -168,23 +267,24 @@ function RestrictionModal({ onAcknowledge }) {
  * Manages which modal/overlay is currently active.
  */
 export default function PracticeSetup() {
-  const [modalView, setModalView] = useState(null); 
+  const [modalView, setModalView] = useState(null);
   const navigate = useNavigate();
 
   return (
     <div className="relative flex min-h-screen w-full flex-col bg-gray-900">
       <PublicNavbar />
       <div className="relative flex flex-1 w-full flex-col items-center justify-center p-4">
-      
         {modalView === null && (
           <div className="flex flex-col items-center gap-6">
-            <h1 className="font-heading text-4xl font-bold text-white">Practice Center</h1>
+            <h1 className="font-heading text-4xl font-bold text-white">
+              Practice Center
+            </h1>
             <p className="text-lg text-gray-400 max-w-lg text-center">
-              You are about to start a new AI-powered interview. When you're ready,
-              configure your session and begin.
+              You are about to start a new AI-powered interview. When you're
+              ready, configure your session and begin.
             </p>
             <button
-              onClick={() => setModalView('pre-interview')} 
+              onClick={() => setModalView("pre-interview")}
               className="h-12 min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-blue-500 px-8 text-base font-bold leading-normal tracking-[0.015em] text-white transition-opacity hover:opacity-90"
             >
               <span className="truncate">Start New Interview</span>
@@ -192,26 +292,22 @@ export default function PracticeSetup() {
           </div>
         )}
 
-        {modalView === 'pre-interview' && (
+        {modalView === "pre-interview" && (
           <PreInterviewModal
             onStart={() => {
-              console.log('Starting interview...');
-              navigate('/interview'); 
+              console.log("Starting interview...");
+              navigate("/interview");
             }}
             onClose={() => setModalView(null)}
           />
         )}
 
-        {modalView === 'post-interview' && (
-          <PostInterviewOverlay
-            onViewReport={() => navigate('/report')}
-          />
+        {modalView === "post-interview" && (
+          <PostInterviewOverlay onViewReport={() => navigate("/report")} />
         )}
 
-        {modalView === 'restriction' && (
-          <RestrictionModal
-            onAcknowledge={() => setModalView(null)} 
-          />
+        {modalView === "restriction" && (
+          <RestrictionModal onAcknowledge={() => setModalView(null)} />
         )}
       </div>
     </div>

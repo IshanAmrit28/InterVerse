@@ -1,5 +1,6 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+//frontend\src\components\ReportPage.jsx
+import React from "react";
+import { Link } from "react-router-dom";
 
 /**
  * A reusable component to display a detailed interview analysis report.
@@ -13,7 +14,11 @@ export default function ReportPage() {
         <div className="flex items-center gap-4 text-white">
           <div className="size-8 text-blue-500">
             {/* Logo SVG */}
-            <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+            <svg
+              fill="none"
+              viewBox="0 0 48 48"
+              xmlns="http://www.w3.org/2000/svg"
+            >
               <path
                 d="M39.5563 34.1455V13.8546C39.5563 15.708 36.8773 17.3437 32.7927 18.3189C30.2914 18.916 27.263 19.2655 24 19.2655C20.737 19.2655 17.7086 18.916 15.2073 18.3189C11.1227 17.3437 8.44365 15.708 8.44365 13.8546V34.1455C8.44365 35.9988 11.1227 37.6346 15.2073 38.6098C17.7086 39.2069 20.737 39.5564 24 39.5564C27.263 39.5564 30.2914 39.2069 32.7927 38.6098C36.8773 37.6346 39.5563 35.9988 39.5563 34.1455Z"
                 fill="currentColor"
@@ -56,10 +61,14 @@ export default function ReportPage() {
           </div>
           <div className="flex items-center gap-2">
             <button className="flex h-10 w-10 cursor-pointer items-center justify-center overflow-hidden rounded-full text-gray-400 transition-colors hover:bg-white/10 hover:text-white">
-              <span className="material-symbols-outlined text-2xl">notifications</span>
+              <span className="material-symbols-outlined text-2xl">
+                notifications
+              </span>
             </button>
             <button className="flex h-10 w-10 cursor-pointer items-center justify-center overflow-hidden rounded-full text-gray-400 transition-colors hover:bg-white/10 hover:text-white">
-              <span className="material-symbols-outlined text-2xl">settings</span>
+              <span className="material-symbols-outlined text-2xl">
+                settings
+              </span>
             </button>
             <div
               className="aspect-square size-10 rounded-full bg-cover bg-center bg-no-repeat"
@@ -87,11 +96,15 @@ export default function ReportPage() {
               </div>
               <div className="flex flex-shrink-0 gap-3">
                 <button className="flex h-10 min-w-[84px] cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-lg bg-gray-700 px-4 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-gray-600 transition-all hover:bg-gray-600">
-                  <span className="material-symbols-outlined text-xl">ios_share</span>
+                  <span className="material-symbols-outlined text-xl">
+                    ios_share
+                  </span>
                   <span className="truncate">Share</span>
                 </button>
                 <button className="flex h-10 min-w-[84px] cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-lg bg-blue-500 px-4 text-sm font-semibold text-gray-900 shadow-sm transition-all hover:bg-blue-600">
-                  <span className="material-symbols-outlined text-xl">download</span>
+                  <span className="material-symbols-outlined text-xl">
+                    download
+                  </span>
                   <span className="truncate">Download PDF</span>
                 </button>
               </div>
@@ -99,14 +112,20 @@ export default function ReportPage() {
             {/* Stats Grid */}
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
               <div className="flex flex-col gap-2 rounded-lg border border-gray-700 bg-gray-800 p-6">
-                <p className="text-base font-medium text-gray-400">Overall Score</p>
+                <p className="text-base font-medium text-gray-400">
+                  Overall Score
+                </p>
                 <p className="font-heading text-3xl font-semibold leading-tight text-white">
                   88/100
                 </p>
               </div>
               <div className="flex flex-col gap-2 rounded-lg border border-gray-700 bg-gray-800 p-6">
-                <p className="text-base font-medium text-gray-400">Confidence</p>
-                <p className="font-heading text-3xl font-semibold leading-tight text-white">High</p>
+                <p className="text-base font-medium text-gray-400">
+                  Confidence
+                </p>
+                <p className="font-heading text-3xl font-semibold leading-tight text-white">
+                  High
+                </p>
               </div>
               <div className="flex flex-col gap-2 rounded-lg border border-gray-700 bg-gray-800 p-6">
                 <p className="text-base font-medium text-gray-400">Duration</p>
@@ -115,7 +134,9 @@ export default function ReportPage() {
                 </p>
               </div>
               <div className="flex flex-col gap-2 rounded-lg border border-gray-700 bg-gray-800 p-6">
-                <p className="text-base font-medium text-gray-400">Difficulty</p>
+                <p className="text-base font-medium text-gray-400">
+                  Difficulty
+                </p>
                 <p className="font-heading text-3xl font-semibold leading-tight text-white">
                   Intermediate
                 </p>
@@ -130,52 +151,68 @@ export default function ReportPage() {
                 {/* Skill Item 1 */}
                 <div className="flex flex-col gap-2">
                   <div className="flex items-baseline justify-between">
-                    <span className="text-sm font-medium text-white">Problem Solving</span>
-                    <span className="text-sm font-semibold text-blue-400">92%</span>
+                    <span className="text-sm font-medium text-white">
+                      Problem Solving
+                    </span>
+                    <span className="text-sm font-semibold text-blue-400">
+                      92%
+                    </span>
                   </div>
                   <div className="h-2 w-full rounded-full bg-white/10">
                     <div
                       className="h-2 rounded-full bg-gradient-to-r from-blue-400 to-blue-500"
-                      style={{ width: '92%' }}
+                      style={{ width: "92%" }}
                     ></div>
                   </div>
                 </div>
                 {/* Skill Item 2 */}
                 <div className="flex flex-col gap-2">
                   <div className="flex items-baseline justify-between">
-                    <span className="text-sm font-medium text-white">Communication</span>
-                    <span className="text-sm font-semibold text-blue-400">85%</span>
+                    <span className="text-sm font-medium text-white">
+                      Communication
+                    </span>
+                    <span className="text-sm font-semibold text-blue-400">
+                      85%
+                    </span>
                   </div>
                   <div className="h-2 w-full rounded-full bg-white/10">
                     <div
                       className="h-2 rounded-full bg-gradient-to-r from-blue-400 to-blue-500"
-                      style={{ width: '85%' }}
+                      style={{ width: "85%" }}
                     ></div>
                   </div>
                 </div>
                 {/* Skill Item 3 */}
                 <div className="flex flex-col gap-2">
                   <div className="flex items-baseline justify-between">
-                    <span className="text-sm font-medium text-white">Technical Knowledge</span>
-                    <span className="text-sm font-semibold text-blue-400">89%</span>
+                    <span className="text-sm font-medium text-white">
+                      Technical Knowledge
+                    </span>
+                    <span className="text-sm font-semibold text-blue-400">
+                      89%
+                    </span>
                   </div>
                   <div className="h-2 w-full rounded-full bg-white/10">
                     <div
                       className="h-2 rounded-full bg-gradient-to-r from-blue-400 to-blue-500"
-                      style={{ width: '89%' }}
+                      style={{ width: "89%" }}
                     ></div>
                   </div>
                 </div>
                 {/* Skill Item 4 */}
                 <div className="flex flex-col gap-2">
                   <div className="flex items-baseline justify-between">
-                    <span className="text-sm font-medium text-white">Clarity &amp; Conciseness</span>
-                    <span className="text-sm font-semibold text-yellow-500">78%</span>
+                    <span className="text-sm font-medium text-white">
+                      Clarity &amp; Conciseness
+                    </span>
+                    <span className="text-sm font-semibold text-yellow-500">
+                      78%
+                    </span>
                   </div>
                   <div className="h-2 w-full rounded-full bg-white/10">
                     <div
                       className="h-2 rounded-full bg-gradient-to-r from-yellow-400 to-yellow-600"
-                      style={{ width: '78%' }}
+                      style={{ width: "78%" }}
                     ></div>
                   </div>
                 </div>
@@ -222,8 +259,11 @@ export default function ReportPage() {
                         1. Data Structures
                       </td>
                       <td className="max-w-xs px-6 py-4 text-sm text-gray-400">
-                        "I used a hash map to achieve O(1) time complexity..."{' '}
-                        <a className="font-semibold text-blue-500 hover:underline" href="#">
+                        "I used a hash map to achieve O(1) time complexity..."{" "}
+                        <a
+                          className="font-semibold text-blue-500 hover:underline"
+                          href="#"
+                        >
                           Read more
                         </a>
                       </td>
@@ -237,8 +277,11 @@ export default function ReportPage() {
                         2. Algorithm Design
                       </td>
                       <td className="max-w-xs px-6 py-4 text-sm text-gray-400">
-                        "For the sorting part, I thought about merge sort..."{' '}
-                        <a className="font-semibold text-blue-500 hover:underline" href="#">
+                        "For the sorting part, I thought about merge sort..."{" "}
+                        <a
+                          className="font-semibold text-blue-500 hover:underline"
+                          href="#"
+                        >
                           Read more
                         </a>
                       </td>
@@ -254,8 +297,12 @@ export default function ReportPage() {
                         3. Behavioral
                       </td>
                       <td className="max-w-xs px-6 py-4 text-sm text-gray-400">
-                        "A time I had a conflict was with a PM over a feature..."{' '}
-                        <a className="font-semibold text-blue-500 hover:underline" href="#">
+                        "A time I had a conflict was with a PM over a
+                        feature..."{" "}
+                        <a
+                          className="font-semibold text-blue-500 hover:underline"
+                          href="#"
+                        >
                           Read more
                         </a>
                       </td>
@@ -273,33 +320,58 @@ export default function ReportPage() {
             {/* Strengths, Weaknesses, and Recommendations */}
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
               <div className="flex flex-col gap-4 rounded-lg border border-gray-700 bg-gray-800 p-6">
-                <h3 className="font-heading text-lg font-semibold text-white">Strengths</h3>
+                <h3 className="font-heading text-lg font-semibold text-white">
+                  Strengths
+                </h3>
                 <ul className="list-inside list-disc space-y-2 text-gray-400">
                   <li>Strong grasp of fundamental data structures.</li>
-                  <li>Effectively used the STAR method for behavioral questions.</li>
-                  <li>Maintained a calm and professional demeanor throughout.</li>
-</ul>
+                  <li>
+                    Effectively used the STAR method for behavioral questions.
+                  </li>
+                  <li>
+                    Maintained a calm and professional demeanor throughout.
+                  </li>
+                </ul>
               </div>
               <div className="flex flex-col gap-4 rounded-lg border border-gray-700 bg-gray-800 p-6">
-                <h3 className="font-heading text-lg font-semibold text-white">Weaknesses</h3>
+                <h3 className="font-heading text-lg font-semibold text-white">
+                  Weaknesses
+                </h3>
                 <ul className="list-inside list-disc space-y-2 text-gray-400">
-                  <li>Could be more explicit about time/space complexity trade-offs.</li>
-                  <li>Some hesitation when explaining alternative approaches.</li>
+                  <li>
+                    Could be more explicit about time/space complexity
+                    trade-offs.
+                  </li>
+                  <li>
+                    Some hesitation when explaining alternative approaches.
+                  </li>
                   <li>Answers could be slightly more concise at times.</li>
                 </ul>
               </div>
               <div className="flex flex-col gap-4 rounded-lg border border-gray-700 bg-gray-800 p-6">
-                <h3 className="font-heading text-lg font-semibold text-white">AI Recommendations</h3>
+                <h3 className="font-heading text-lg font-semibold text-white">
+                  AI Recommendations
+                </h3>
                 <ul className="list-inside list-disc space-y-2 text-gray-400">
-                  <li>Practice verbally explaining complexity for common algorithms.</li>
-                  <li>Prepare 2-3 alternative solutions for common problem types.</li>
-                  <li>Try another session focusing on "System Design" questions.</li>
+                  <li>
+                    Practice verbally explaining complexity for common
+                    algorithms.
+                  </li>
+                  <li>
+                    Prepare 2-3 alternative solutions for common problem types.
+                  </li>
+                  <li>
+                    Try another session focusing on "System Design" questions.
+                  </li>
                 </ul>
               </div>
             </div>
             {/* Final CTA */}
             <div className="pt-4">
-              <Link to="/practice" className="flex h-12 w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-gradient-to-r from-blue-400 to-blue-500 px-6 text-base font-semibold text-white shadow-lg transition-all hover:opacity-90">
+              <Link
+                to="/practice"
+                className="flex h-12 w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-gradient-to-r from-blue-400 to-blue-500 px-6 text-base font-semibold text-white shadow-lg transition-all hover:opacity-90"
+              >
                 Start Another Practice Session
               </Link>
             </div>

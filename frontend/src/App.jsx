@@ -28,6 +28,7 @@ function App() {
           <Route path="/settings" element={<Settings />} />
           <Route path="/report" element={<ReportPage />} />
           <Route path="/practice" element={<PracticeSimulation />} />
+          <Route path="/report/:reportId" element={<ReportPage />} />
           <Route path="*" element={<ErrorPage />} />
         </Routes>
         {/* <Footer /> */}

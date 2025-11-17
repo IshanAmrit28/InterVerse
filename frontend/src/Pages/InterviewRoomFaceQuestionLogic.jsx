@@ -1,4 +1,4 @@
-// --- GoogleMeetSimple.jsx ---
+//frontend\src\Pages\InterviewRoomFaceQuestionLogic.jsx
 import React, { useState, useEffect, useRef } from "react";
 // import { useFaceDetection } from "../components/useFaceDetection"; // <-- REMOVED
 import { ParticipantTile, ControlBar } from "../components/MeetComponents";

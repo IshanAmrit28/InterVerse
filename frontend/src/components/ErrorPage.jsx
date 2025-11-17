@@ -1,5 +1,6 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+//frontend\src\components\ErrorPage.jsx
+import React from "react";
+import { Link } from "react-router-dom";
 /**
  * A reusable 404 Not Found error page component.
  * Includes a header and a link to return to the dashboard.
@@ -12,7 +13,12 @@ export default function ErrorPage() {
         <div className="flex items-center gap-4 text-white">
           <div className="text-blue-500">
             {/* Logo SVG */}
-            <svg className="h-7 w-7" fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+            <svg
+              className="h-7 w-7"
+              fill="none"
+              viewBox="0 0 48 48"
+              xmlns="http://www.w3.org/2000/svg"
+            >
               <path
                 d="M39.5563 34.1455V13.8546C39.5563 15.708 36.8773 17.3437 32.7927 18.3189C30.2914 18.916 27.263 19.2655 24 19.2655C20.737 19.2655 17.7086 18.916 15.2073 18.3189C11.1227 17.3437 8.44365 15.708 8.44365 13.8546V34.1455C8.44365 35.9988 11.1227 37.6346 15.2073 38.6098C17.7086 39.2069 20.737 39.5564 24 39.5564C27.263 39.5564 30.2914 39.2069 32.7927 38.6098C36.8773 37.6346 39.5563 35.9988 39.5563 34.1455Z"
                 fill="currentColor"
@@ -55,7 +61,10 @@ export default function ErrorPage() {
           </p>
           {/* Call to Action Button */}
           <div className="flex justify-center px-4 py-3">
-            <Link to="/dashboard" className="h-12 min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl bg-blue-500 px-8 text-base font-bold leading-normal tracking-[0.015em] text-gray-900 transition-colors hover:bg-blue-600">
+            <Link
+              to="/dashboard"
+              className="h-12 min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl bg-blue-500 px-8 text-base font-bold leading-normal tracking-[0.015em] text-gray-900 transition-colors hover:bg-blue-600"
+            >
               <span className="truncate">Return to Dashboard</span>
             </Link>
           </div>

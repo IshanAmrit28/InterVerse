@@ -1,5 +1,6 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+//frontend\src\components\AboutUs.jsx
+import React from "react";
+import { Link } from "react-router-dom";
 /**
  * A reusable "About Us" page component.
  * Includes a header, hero section, mission, team, and privacy sections.
@@ -14,7 +15,11 @@ export default function AboutPage() {
           <Link to="/" className="flex items-center gap-4 text-white">
             <div className="size-6 text-blue-500">
               {/* Logo SVG */}
-              <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+              <svg
+                fill="none"
+                viewBox="0 0 48 48"
+                xmlns="http://www.w3.org/2000/svg"
+              >
                 <path
                   d="M39.5563 34.1455V13.8546C39.5563 15.708 36.8773 17.3437 32.7927 18.3189C30.2914 18.916 27.263 19.2655 24 19.2655C20.737 19.2655 17.7086 18.916 15.2073 18.3189C11.1227 17.3437 8.44365 15.708 8.44365 13.8546V34.1455C8.44365 35.9988 11.1227 37.6346 15.2073 38.6098C17.7086 39.2069 20.737 39.5564 24 39.5564C27.263 39.5564 30.2914 39.2069 32.7927 38.6098C36.8773 37.6346 39.5563 35.9988 39.5563 34.1455Z"
                   fill="currentColor"
@@ -30,7 +35,7 @@ export default function AboutPage() {
             <h2 className="text-white text-lg font-bold leading-tight font-heading">
               Smart Interview Coach
             </h2>
-          </Link> 
+          </Link>
           <div className="hidden items-center gap-9 lg:flex">
             <Link
               className="text-gray-300 hover:text-blue-500 text-sm font-medium leading-normal"
@@ -50,15 +55,24 @@ export default function AboutPage() {
             >
               Blog
             </Link>
-            <Link className="text-blue-500 text-sm font-bold leading-normal" to="/about">
+            <Link
+              className="text-blue-500 text-sm font-bold leading-normal"
+              to="/about"
+            >
               About
             </Link>
           </div>
           <div className="flex flex-1 justify-end gap-2">
-            <Link to="/login" className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-gray-700 text-white text-sm font-bold leading-normal tracking-[0.015em] hover:bg-gray-600">
+            <Link
+              to="/login"
+              className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-gray-700 text-white text-sm font-bold leading-normal tracking-[0.015em] hover:bg-gray-600"
+            >
               <span className="truncate">Log In</span>
             </Link>
-            <Link to="/signup" className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-blue-500 text-gray-900 text-sm font-bold leading-normal tracking-[0.015em] hover:bg-opacity-90">
+            <Link
+              to="/signup"
+              className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-blue-500 text-gray-900 text-sm font-bold leading-normal tracking-[0.015em] hover:bg-opacity-90"
+            >
               <span className="truncate">Sign Up</span>
             </Link>
           </div>
@@ -73,8 +87,8 @@ export default function AboutPage() {
               About Smart Interview Coach
             </h1>
             <p className="max-w-3xl text-lg text-gray-300">
-              We're on a mission to empower professionals to conquer their interviews with confidence
-              and intelligence.
+              We're on a mission to empower professionals to conquer their
+              interviews with confidence and intelligence.
             </p>
           </section>
 
@@ -85,15 +99,18 @@ export default function AboutPage() {
                 Our Mission
               </h2>
               <p className="text-base leading-relaxed text-gray-300">
-                Smart Interview Coach was founded on the belief that everyone deserves a fair chance
-                to showcase their true potential. We're dedicated to leveling the playing field in
-                the hiring process by providing AI-powered tools and personalized feedback that
-                helps you prepare smarter, not just harder.
+                Smart Interview Coach was founded on the belief that everyone
+                deserves a fair chance to showcase their true potential. We're
+                dedicated to leveling the playing field in the hiring process by
+                providing AI-powered tools and personalized feedback that helps
+                you prepare smarter, not just harder.
               </p>
               <p className="text-base leading-relaxed text-gray-300">
-                Our goal is to demystify the interview process, build your confidence, and help you
-                land the job you deserve. We combine cutting-edge technology with expert insights to
-                create a personalized coaching experience that adapts to your unique needs.
+                Our goal is to demystify the interview process, build your
+                confidence, and help you land the job you deserve. We combine
+                cutting-edge technology with expert insights to create a
+                personalized coaching experience that adapts to your unique
+                needs.
               </p>
             </div>
             <div
@@ -128,7 +145,9 @@ export default function AboutPage() {
                 ></div>
                 <div>
                   <p className="text-lg font-bold text-white">Alex Johnson</p>
-                  <p className="text-sm font-medium text-blue-500">Co-Founder & CEO</p>
+                  <p className="text-sm font-medium text-blue-500">
+                    Co-Founder & CEO
+                  </p>
                   <a
                     className="text-sm text-gray-400 hover:text-blue-500"
                     href="#"
@@ -148,7 +167,9 @@ export default function AboutPage() {
                 ></div>
                 <div>
                   <p className="text-lg font-bold text-white">Maria Garcia</p>
-                  <p className="text-sm font-medium text-blue-500">Co-Founder & CTO</p>
+                  <p className="text-sm font-medium text-blue-500">
+                    Co-Founder & CTO
+                  </p>
                   <a
                     className="text-sm text-gray-400 hover:text-blue-500"
                     href="#"
@@ -168,7 +189,9 @@ export default function AboutPage() {
                 ></div>
                 <div>
                   <p className="text-lg font-bold text-white">David Chen</p>
-                  <p className="text-sm font-medium text-blue-500">Lead AI Engineer</p>
+                  <p className="text-sm font-medium text-blue-500">
+                    Lead AI Engineer
+                  </p>
                   <a
                     className="text-sm text-gray-400 hover:text-blue-500"
                     href="#"
@@ -188,7 +211,9 @@ export default function AboutPage() {
                 ></div>
                 <div>
                   <p className="text-lg font-bold text-white">Emily White</p>
-                  <p className="text-sm font-medium text-blue-500">Head of Product Design</p>
+                  <p className="text-sm font-medium text-blue-500">
+                    Head of Product Design
+                  </p>
                   <a
                     className="text-sm text-gray-400 hover:text-blue-500"
                     href="#"
@@ -210,10 +235,10 @@ export default function AboutPage() {
                 Your Privacy is Our Priority
               </h2>
               <p className="text-gray-300">
-                We are deeply committed to protecting your data and privacy. Your interview
-                practices and personal information are encrypted and securely stored. We believe
-                that trust is the foundation of our relationship with you, and we work tirelessly to
-                uphold it.
+                We are deeply committed to protecting your data and privacy.
+                Your interview practices and personal information are encrypted
+                and securely stored. We believe that trust is the foundation of
+                our relationship with you, and we work tirelessly to uphold it.
               </p>
               <button className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-5 bg-blue-500 text-gray-900 text-base font-bold leading-normal tracking-[0.015em] hover:bg-opacity-90">
                 <span className="truncate">Read Our Privacy Policy</span>
