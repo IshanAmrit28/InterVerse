@@ -29,7 +29,7 @@ const Login = () => {
     userData.isLoggedIn = true;
 
     // ✅ Navigate to dashboard (or homepage)
-    navigate("/");
+    navigate("/dashboard");
   };
 
   return (

@@ -1,104 +1,39 @@
+import React from 'react';
+
+/**
+ * A reusable Footer component for the website.
+ * Styled with standard Tailwind dark theme classes.
+ */
 export default function Footer() {
   return (
-    <footer className="bg-white dark:bg-gray-900">
-      <div className="mx-auto max-w-7xl px-4 pt-16 pb-8 sm:px-6 lg:px-8 lg:pt-24">
-        <div className="text-center">
-          <h2 className="text-3xl font-extrabold text-gray-900 sm:text-5xl dark:text-white">
-            Customise Your Product
-          </h2>
-
-          <p className="mx-auto mt-4 max-w-sm text-gray-500 dark:text-gray-400">
-            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Cum
-            maiores ipsum eos temporibus ea nihil.
-          </p>
-
-          <a
-            href="#"
-            className="mt-8 inline-block rounded-full border border-indigo-600 px-12 py-3 text-sm font-medium text-white hover:bg-indigo-600 hover:text-white focus:ring-3 focus:outline-hidden"
-          >
-            Get Started
+    <footer className="flex justify-center border-t border-solid border-gray-700/50 bg-gray-900">
+      <div className="flex w-full max-w-[1440px] flex-col items-center justify-between gap-6 px-10 py-8 sm:flex-row">
+        <p className="text-sm text-gray-400">© 2024 Smart Interview Coach. All rights reserved.</p>
+        <div className="flex items-center gap-6">
+          <a className="text-sm text-gray-400 hover:text-blue-400 transition-colors" href="#">
+            About
+          </a>
+          <a className="text-sm text-gray-400 hover:text-blue-400 transition-colors" href="#">
+            Pricing
+          </a>
+          <a className="text-sm text-gray-400 hover:text-blue-400 transition-colors" href="#">
+            Contact
+          </a>
+          <a className="text-sm text-gray-400 hover:text-blue-400 transition-colors" href="#">
+            Privacy Policy
           </a>
         </div>
-
-        <div className="mt-16 border-t border-gray-100 pt-8 sm:flex sm:items-center sm:justify-between lg:mt-24 dark:border-gray-800">
-          <ul className="flex flex-wrap justify-center gap-4 text-xs lg:justify-end">
-            <li>
-              <a
-                href="#"
-                className="text-gray-500 transition hover:opacity-75 dark:text-gray-400"
-              >
-                Terms &amp; Conditions
-              </a>
-            </li>
-            <li>
-              <a
-                href="#"
-                className="text-gray-500 transition hover:opacity-75 dark:text-gray-400"
-              >
-                Privacy Policy
-              </a>
-            </li>
-            <li>
-              <a
-                href="#"
-                className="text-gray-500 transition hover:opacity-75 dark:text-gray-400"
-              >
-                Cookies
-              </a>
-            </li>
-          </ul>
-
-          <ul className="mt-8 flex justify-center gap-6 sm:mt-0 lg:justify-end">
-            {/* Facebook */}
-            <li>
-              <a
-                href="#"
-                rel="noreferrer"
-                target="_blank"
-                className="text-gray-700 transition hover:opacity-75 dark:text-gray-200"
-              >
-                <span className="sr-only">Facebook</span>
-                <svg
-                  className="size-6"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                >
-                  <path
-                    fillRule="evenodd"
-                    clipRule="evenodd"
-                    d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"
-                  />
-                </svg>
-              </a>
-            </li>
-
-            {/* Instagram */}
-            <li>
-              <a
-                href="#"
-                rel="noreferrer"
-                target="_blank"
-                className="text-gray-700 transition hover:opacity-75 dark:text-gray-200"
-              >
-                <span className="sr-only">Instagram</span>
-                <svg
-                  className="size-6"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                >
-                  <path
-                    fillRule="evenodd"
-                    clipRule="evenodd"
-                    d="M12.315 2c2.43 0 2.784.013 3.808.06..."
-                  />
-                </svg>
-              </a>
-            </li>
-
-            {/* Twitter, GitHub, Dribbble — same structure */}
-          </ul>
+        <div className="flex items-center gap-4">
+          <a className="text-gray-400 hover:text-blue-400 transition-colors" aria-label="LinkedIn social media icon" href="#">
+            <svg aria-hidden="true" className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"></path>
+            </svg>
+          </a>
+          <a className="text-gray-400 hover:text-blue-400 transition-colors" aria-label="Twitter social media icon" href="#">
+            <svg aria-hidden="true" className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616v.064c0 2.298 1.634 4.218 3.82 4.65- .783.212-1.623.262-2.478.098 1.62 2.206 4.256 3.02 6.566 2.476-2.189 1.711-4.965 2.597-7.86 2.15 2.296 1.476 5.023 2.338 7.948 2.338 9.525 0 14.738-7.892 14.738-14.738 0-.224-.005-.447-.015-.668.986-.712 1.85-1.6 2.548-2.637z"></path>
+            </svg>
+          </a>
         </div>
       </div>
     </footer>

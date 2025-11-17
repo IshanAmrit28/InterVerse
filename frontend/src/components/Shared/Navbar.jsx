@@ -1,130 +1,54 @@
-import { Link, useNavigate, useLocation } from "react-router-dom";
-import { userData } from "../../services/userUtil";
-import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
+import React from 'react';
+import { Link } from 'react-router-dom';
 
-const navigation = [
-  { name: "Home", href: "/", current: false },
-  { name: "Interview", href: "/interview", current: false },
-  { name: "Resume Check", href: "/SD", current: false },
-  { name: "Dashboard", href: "/DF", current: true },
-];
-
-function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
-}
-
+/**
+ * A reusable public-facing navbar for the Landing Page, About Page, etc.
+ * Extracted from LandingPage.jsx and converted to use React Router Links.
+ */
 export default function Navbar() {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const isLoggedIn = userData.isLoggedIn;
-
-  const handleLogout = () => {
-    userData.isLoggedIn = false;
-    navigate("/login");
-  };
-
   return (
-    <nav className="relative bg-black after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:h-px after:bg-white/10">
-      <div className="mx-auto max-w-[95%] px-3">
-        <div className="relative flex h-16 items-center justify-between">
-          {/* Left: Logo */}
-          <div className="flex items-center">
-            <Link to="/">
-              <img
-                alt="Your Company"
-                src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=500"
-                className="h-8 w-auto"
-              />
-            </Link>
+    <header className="sticky top-0 z-50 flex justify-center border-b border-solid border-gray-700/50 bg-gray-900/80 backdrop-blur-sm">
+      <div className="flex w-full max-w-[1440px] items-center justify-between px-10 py-4">
+        
+        {/* Logo/Title linked to Home */}
+        <Link to="/" className="flex items-center gap-4 text-white">
+          <div className="size-6 text-blue-500">
+            <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M39.5563 34.1455V13.8546C39.5563 15.708 36.8773 17.3437 32.7927 18.3189C30.2914 18.916 27.263 19.2655 24 19.2655C20.737 19.2655 17.7086 18.916 15.2073 18.3189C11.1227 17.3437 8.44365 15.708 8.44365 13.8546V34.1455C8.44365 35.9988 11.1227 37.6346 15.2073 38.6098C17.7086 39.2069 20.737 39.5564 24 39.5564C27.263 39.5564 30.2914 39.2069 32.7927 38.6098C36.8773 37.6346 39.5563 35.9988 39.5563 34.1455Z"
+                fill="currentColor"
+              ></path>
+              <path
+                clipRule="evenodd"
+                d="M10.4485 13.8519C10.4749 13.9271 10.6203 14.246 11.379 14.7361C12.298 15.3298 13.7492 15.9145 15.6717 16.3735C18.0007 16.9296 20.8712 17.2655 24 17.2655C27.1288 17.2655 29.9993 16.9296 32.3283 16.3735C34.2508 15.9145 35.702 15.3298 36.621 14.7361C37.3796 14.246 37.5251 13.9271 37.5515 13.8519C37.5287 13.7876 37.4333 13.5973 37.0635 13.2931C36.5266 12.8516 35.6288 12.3647 34.343 11.9175C31.79 11.0295 28.1333 10.4437 24 10.4437C19.8667 10.4437 16.2099 11.0295 13.657 11.9175C12.3712 12.3647 11.4734 12.8516 10.9365 13.2931C10.5667 13.5973 10.4713 13.7876 10.4485 13.8519ZM37.5563 18.7877C36.3176 19.3925 34.8502 19.8839 33.2571 20.2642C30.5836 20.9025 27.3973 21.2655 24 21.2655C20.6027 21.2655 17.4164 20.9025 14.7429 20.2642C13.1498 19.8839 11.6824 19.3925 10.4436 18.7877V34.1275C10.4515 34.1545 10.5427 34.4867 11.379 35.027C12.298 35.6207 13.7492 36.2054 15.6717 36.6644C18.0007 37.2205 20.8712 37.5564 24 37.5564C27.1288 37.5564 29.9993 37.2205 32.3283 36.6644C34.2508 36.2054 35.702 35.6207 36.621 35.027C37.4573 34.4867 37.5485 34.1546 37.5563 34.1275V18.7877ZM41.5563 13.8546V34.1455C41.5563 36.1078 40.158 37.5042 38.7915 38.3869C37.3498 39.3182 35.4192 40.0389 33.2571 40.5551C30.5836 41.1934 27.3973 41.5564 24 41.5564C20.6027 41.5564 17.4164 41.1934 14.7429 40.5551C12.5808 40.0389 10.6502 39.3182 9.20848 38.3869C7.84205 37.5042 6.44365 36.1078 6.44365 34.1455L6.44365 13.8546C6.44365 12.2684 7.37223 11.0454 8.39581 10.2036C9.43325 9.3505 10.8137 8.67141 12.343 8.13948C15.4203 7.06909 19.5418 6.44366 24 6.44366C28.4582 6.44366 32.5797 7.06909 35.657 8.13948C37.1863 8.67141 38.5667 9.3505 39.6042 10.2036C40.6278 11.0454 41.5563 12.2684 41.5563 13.8546Z"
+                fill="currentColor"
+                fillRule="evenodd"
+              ></path>
+            </svg>
           </div>
+          <h2 className="text-xl font-bold leading-tight tracking-[-0.015em] font-heading">Smart Interview Coach</h2>
+        </Link>
 
-          {/* Center: Navigation (visible only when logged in) */}
-          {isLoggedIn && (
-            <div className="flex space-x-6 absolute left-1/2 transform -translate-x-1/2">
-              {navigation.map((item) => (
-                <Link
-                  key={item.name}
-                  to={item.href}
-                  className={classNames(
-                    location.pathname === item.href
-                      ? "bg-grey-100 text-white"
-                      : "text-gray-300 hover:bg-white/10 hover:text-white",
-                    "rounded-md px-3 py-2 text-sm font-medium"
-                  )}
-                >
-                  {item.name}
-                </Link>
-              ))}
-            </div>
-          )}
-
-          {/* Right: Login/Signup or Profile */}
-          <div className="flex items-center space-x-3">
-            {isLoggedIn ? (
-              // Profile Dropdown
-              <Menu as="div" className="relative">
-                <MenuButton className="relative flex rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">
-                  <span className="sr-only">Open user menu</span>
-                  <img
-                    alt="User"
-                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                    className="h-8 w-8 rounded-full bg-gray-800 outline -outline-offset-1 outline-white/10"
-                  />
-                </MenuButton>
-
-                <MenuItems
-                  transition
-                  className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-black py-1 outline -outline-offset-1 outline-white/50 transition data-closed:scale-95 data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in"
-                >
-                  <MenuItem>
-                    <Link
-                      to="/profile"
-                      className="block px-4 py-2 text-sm text-gray-300 hover:bg-white/5"
-                    >
-                      Your Profile
-                    </Link>
-                  </MenuItem>
-
-                  <MenuItem>
-                    <button
-                      onClick={handleLogout}
-                      className="w-full text-left block px-4 py-2 text-sm text-gray-300 hover:bg-white/5"
-                    >
-                      Sign Out
-                    </button>
-                  </MenuItem>
-                </MenuItems>
-              </Menu>
-            ) : (
-              // Login + Sign Up Buttons
-              <>
-                <Link
-                  to="/login"
-                  className={classNames(
-                    location.pathname === "/login"
-                      ? "bg-indigo-600 text-white"
-                      : "text-gray-300 hover:text-white hover:bg-white/5",
-                    "px-4 py-2 text-sm font-medium rounded-md"
-                  )}
-                >
-                  Log In
-                </Link>
-                <Link
-                  to="/signup"
-                  className={classNames(
-                    location.pathname === "/signup"
-                      ? "bg-indigo-600 text-white"
-                      : "text-gray-300 hover:text-white hover:bg-white/5",
-                    "px-4 py-2 text-sm font-medium rounded-md"
-                  )}
-                >
-                  Sign Up
-                </Link>
-              </>
-            )}
+        {/* Navigation and Auth Links */}
+        <div className="flex items-center gap-6">
+          <nav className="flex items-center gap-6">
+            <Link className="text-sm font-medium leading-normal text-white hover:text-blue-400 transition-colors" to="/">Home</Link>
+            <Link className="text-sm font-medium leading-normal text-white hover:text-blue-400 transition-colors" to="/practice">Practice</Link>
+            <Link className="text-sm font-medium leading-normal text-white hover:text-blue-400 transition-colors" to="/dashboard">Dashboard</Link>
+            <Link className="text-sm font-medium leading-normal text-white hover:text-blue-400 transition-colors" to="/report">Reports</Link>
+          </nav>
+          <div className="flex items-center gap-2">
+            {/* Login Button */}
+            <Link to="/login" className="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-gray-800 text-white text-sm font-bold leading-normal tracking-[0.015em] hover:bg-gray-700 transition-colors">
+              <span className="truncate">Login</span>
+            </Link>
+            {/* Sign Up Button */}
+            <Link to="/signup" className="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-blue-500 text-gray-900 text-sm font-bold leading-normal tracking-[0.015em] hover:opacity-90 transition-opacity">
+              <span className="truncate">Sign Up</span>
+            </Link>
           </div>
         </div>
       </div>
-    </nav>
+    </header>
   );
 }
