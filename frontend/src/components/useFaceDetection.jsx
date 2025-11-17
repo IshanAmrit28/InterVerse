@@ -1,4 +1,4 @@
-// --- useFaceDetection.js ---
+//frontend\src\components\useFaceDetection.jsx
 import { useRef, useEffect } from "react";
 import * as faceapi from "face-api.js";
 

@@ -1,4 +1,4 @@
-// --- MeetComponents.jsx ---
+//frontend\src\components\MeetComponents.jsx
 import React from "react";
 
 // --- Icons ---

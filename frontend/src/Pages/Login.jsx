@@ -1,3 +1,4 @@
+//frontend\src\Pages\Login.jsx
 import { useState } from "react";
 import { MdEmail } from "react-icons/md";
 import { RiLockPasswordFill } from "react-icons/ri";
@@ -29,7 +30,7 @@ const Login = () => {
     userData.isLoggedIn = true;
 
     // ✅ Navigate to dashboard (or homepage)
-    navigate("/");
+    navigate("/dashboard");
   };
 
   return (

@@ -1,3 +1,4 @@
+//frontend\src\services\authServices.js
 import axios from "axios";
 
 const API_URL = "http://localhost:3000/api/auth"; // adjust if backend URL differs
