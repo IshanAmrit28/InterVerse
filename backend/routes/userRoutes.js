@@ -1,3 +1,4 @@
+//backend\routes\userRoutes.js
 const express = require("express");
 const userRouter = express.Router();
 const authController = require("../controllers/authController");

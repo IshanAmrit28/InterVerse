@@ -1,344 +1,196 @@
-// const { Configuration, OpenAIApi } = require("openai"); // OpenAI
-// const { GoogleGenerativeAI } = require("@google/generative-ai"); // Gemini
-// const fs = require("fs");
-// const PDFParser = require("pdf2json");
+// backend\utils\aiProcessor.js
 
-// const genAI1 = new GoogleGenerativeAI(process.env.GEMINI_API_KEY1);
-// const genAI2 = new GoogleGenerativeAI(process.env.GEMINI_API_KEY2);
-// const genAI3 = new GoogleGenerativeAI(process.env.GEMINI_API_KEY3);
-// // const openAI = new OpenAIApi(
-// //   new Configuration({ apiKey: process.env.OPENAI_API_KEY })
-// // );
-
-// // ========== Extract PDF Text ==========
-// const extractResumeText = async (filePath) => {
-//   const pdfBuffer = fs.readFileSync(filePath);
-//   return new Promise((resolve, reject) => {
-//     const pdfParser = new PDFParser();
-//     pdfParser.on("pdfParser_dataError", (err) => reject(err.parserError));
-//     pdfParser.on("pdfParser_dataReady", (pdfData) => {
-//       let text = "";
-//       pdfData.Pages.forEach((page) =>
-//         page.Texts.forEach((t) =>
-//           t.R.forEach((r) => (text += decodeURIComponent(r.T) + " "))
-//         )
-//       );
-//       resolve(text.trim());
-//     });
-//     pdfParser.parseBuffer(pdfBuffer);
-//   });
-// };
-
-// // ========== Resume Scoring (OpenAI) ==========
-// const scoreResume = async (resumeText, jobDescription) => {
-//   try {
-//     const prompt = `
-//       You are an expert recruiter. Score this resume against the job description.
-//       Respond strictly as JSON:
-//       {
-//         "skills_found": [...],
-//         "missing_skills": [...],
-//         "scores": {
-//           "Experience": 1-10,
-//           "Skills": 1-10,
-//           "Projects": 1-10,
-//           "Education": 1-10
-//         },
-//         "summary": "short evaluation"
-//       }
-//       Job Description: ${jobDescription}
-//       Resume Text: ${resumeText}
-//     `;
-
-//     const response = await openAI.createChatCompletion({
-//       model: "gpt-4",
-//       messages: [{ role: "user", content: prompt }],
-//       temperature: 0,
-//     });
-
-//     const text = response.data.choices[0].message.content;
-//     return JSON.parse(text.replace(/```json|```/g, "").trim());
-//   } catch (err) {
-//     console.error("AI JSON parse error (Resume Scoring):", err);
-//     return {
-//       scores: {},
-//       summary: "AI failed",
-//       skills_found: [],
-//       missing_skills: [],
-//     };
-//   }
-// };
-
-// // ========== Resume-Based Questions (Gemini) ==========
-// const generateQuestions = async (resumeText, jobRole) => {
-//   try {
-//     const prompt = `
-//       You are an experienced interviewer. Generate 3-5 short technical questions
-//       based on candidate resume and job role.
-//       Respond strictly as JSON: { "job_role": "${jobRole}", "questions": ["Q1","Q2","Q3"] }
-//       Resume Text: ${resumeText}
-//     `;
-//     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-//     const result = await model.generateContent(prompt);
-//     const text = result.response.text();
-//     return JSON.parse(text.replace(/```json|```/g, "").trim()).questions || [];
-//   } catch (err) {
-//     console.error("AI JSON parse error (Resume Questions):", err);
-//     return [];
-//   }
-// };
-
-// // ========== Overall Evaluation (Third LLM) ==========
-// const overallEvaluation = async (scoreData, questionsData) => {
-//   try {
-//     const prompt = `
-//       Senior evaluator: Based on resume scores and questions, provide evaluation.
-//       Respond as JSON:
-//       { "overall_rating": "Excellent/Good/Average/Poor",
-//         "feedback": "one paragraph feedback",
-//         "recommendation": "Hire/Consider/Reject"
-//       }
-//       Resume Scoring: ${JSON.stringify(scoreData)}
-//       Questions: ${JSON.stringify(questionsData)}
-//     `;
-//     // Placeholder for third LLM API call
-//     // Use OpenAI or any other LLM
-//     const response = await openAI.createChatCompletion({
-//       model: "gpt-4",
-//       messages: [{ role: "user", content: prompt }],
-//       temperature: 0,
-//     });
-
-//     const text = response.data.choices[0].message.content;
-//     return JSON.parse(text.replace(/```json|```/g, "").trim());
-//   } catch (err) {
-//     console.error("AI JSON parse error (Overall Eval):", err);
-//     return {
-//       overall_rating: "Average",
-//       feedback: "Evaluation failed",
-//       recommendation: "Consider",
-//     };
-//   }
-// };
-
-// // ========== Main Processor ==========
-// const processResume = async (resumeFilePath, jobDescription, jobRole) => {
-//   try {
-//     const resumeText = await extractResumeText(resumeFilePath);
-
-//     // Parallel AI tasks
-//     const [scoreData, questionsData] = await Promise.all([
-//       scoreResume(resumeText, jobDescription),
-//       generateQuestions(resumeText, jobRole),
-//     ]);
-
-//     const finalEval = await overallEvaluation(scoreData, questionsData);
-
-//     // Delete resume after processing
-//     if (fs.existsSync(resumeFilePath)) fs.unlinkSync(resumeFilePath);
-
-//     return {
-//       resume_summary: scoreData.summary,
-//       resume_scores: scoreData.scores,
-//       resumeBasedQuestions: questionsData,
-//       final_evaluation: finalEval,
-//     };
-//   } catch (err) {
-//     console.error("AI processing error:", err);
-//     if (fs.existsSync(resumeFilePath)) fs.unlinkSync(resumeFilePath);
-//     throw new Error("AI processing failed.");
-//   }
-// };
-
-// module.exports = { processResume };
-
-/**
- * AI Resume Processing Utility
- * Handles parsing, scoring, question generation, and final evaluation using Gemini APIs.
- */
-
-import fs from "fs";
-import PDFParser from "pdf2json";
-import GoogleGenerativeAI from "@google/genai";
-import dotenv from "dotenv";
+const fs = require("fs");
+const PDFParser = require("pdf2json");
+const { GoogleGenerativeAI } = require("@google/generative-ai");
+const dotenv = require("dotenv");
 dotenv.config();
 
 // ====================== GEMINI CLIENT SETUP ======================
 const genAI1 = new GoogleGenerativeAI(process.env.GEMINI_API_KEY1); // Resume Review
 const genAI2 = new GoogleGenerativeAI(process.env.GEMINI_API_KEY2); // Question Generation
-const genAI3 = new GoogleGenerativeAI(process.env.GEMINI_API_KEY3); // Overall Evaluation
+const genAI3 = new GoogleGenerativeAI(process.env.GEMINI_API_KEY3);
 
 // ====================== SAFE STRING DECODER ======================
 const safeDecode = (str) => {
-  try {
-    return decodeURIComponent(str);
-  } catch {
-    return str.replace(/%([0-9A-F]{2})/gi, (m, p1) => {
-      const code = parseInt(p1, 16);
-      return code >= 32 && code <= 126 ? String.fromCharCode(code) : " ";
-    });
-  }
+  try {
+  	return decodeURIComponent(str);
+  } catch {
+  	return str.replace(/%([0-9A-F]{2})/gi, (m, p1) => {
+  	const code = parseInt(p1, 16);
+  	return code >= 32 && code <= 126 ? String.fromCharCode(code) : " ";
+  	});
+  }
 };
 
 // ====================== EXTRACT TEXT FROM PDF ======================
 const extractResumeText = async (filePath) => {
-  const pdfBuffer = fs.readFileSync(filePath);
-  return new Promise((resolve, reject) => {
-    const pdfParser = new PDFParser();
-
-    pdfParser.on("pdfParser_dataError", (err) => reject(err.parserError));
-
-    pdfParser.on("pdfParser_dataReady", (pdfData) => {
-      let text = "";
-
-      pdfData.Pages.forEach((page) => {
-        page.Texts.forEach((t) => {
-          t.R.forEach((r) => {
-            text += safeDecode(r.T) + " ";
-          });
-        });
-      });
-
-      // Normalize text
-      text = text
-        .replace(/\s+/g, " ")
-        .replace(/[^\x20-\x7E]+/g, " ")
-        .trim();
-
-      resolve(text);
-    });
-
-    pdfParser.parseBuffer(pdfBuffer);
-  });
+  const pdfBuffer = fs.readFileSync(filePath);
+  return new Promise((resolve, reject) => {
+  	const pdfParser = new PDFParser();
+  	pdfParser.on("pdfParser_dataError", (err) => reject(err.parserError));
+  	pdfParser.on("pdfParser_dataReady", (pdfData) => {
+  	let text = "";
+  	pdfData.Pages.forEach((page) => {
+  	page.Texts.forEach((t) => {
+  	t.R.forEach((r) => {
+  	text += safeDecode(r.T) + " ";
+  	});
+  	});
+  	});
+  	text = text
+  	.replace(/\s+/g, " ")
+  	.replace(/[^\x20-\x7E]+/g, " ")
+  	.trim();
+  	resolve(text);
+  	});
+  	pdfParser.parseBuffer(pdfBuffer);
+  });
 };
 
 // ====================== RESUME REVIEW (AI 1) ======================
+// This prompt matches your database schema
 const scoreResume = async (resumeText, jobDescription) => {
-  try {
-    const prompt = `
-You are an experienced recruiter. Analyze the candidate's resume in the context of this job.
-Return STRICT JSON with this structure:
+  try {
+  	const prompt = `
+You are an expert technical recruiter. Analyze the candidate's resume against the provided job description.
+Return STRICT JSON with this exact structure:
 {
-  "skills_found": [ "..." ],
-  "missing_skills": [ "..." ],
-  "scores": {
-    "Experience": 1-10,
-    "Skills": 1-10,
-    "Projects": 1-10,
-    "Education": 1-10
-  },
-  "summary": "short summary (max 3 lines)"
+  "resumeScore": <A single number from 0-100 representing the resume's fit for the job>,
+  "feedbackOnResume": {
+  	"strengths": ["List 2-3 key strengths as strings in this array"],
+  	"weaknesses": ["List 2-3 key weaknesses or areas for improvement"]
+  },
+  "hiringChance": "<A single string: 'Hire', 'Consider', or 'Reject'>"
 }
+
 JOB DESCRIPTION:
 ${jobDescription}
 
 RESUME:
 ${resumeText}
 `;
+		// ✅ FIX: Using 'gemini-flash-latest' from your working example
+  	const model = genAI1.getGenerativeModel({ model: "gemini-flash-latest" });
+  	const result = await model.generateContent(prompt);
+  	const text = result.response.text();
+  	return JSON.parse(text.replace(/```json|```/g, "").trim());
 
-    const model = genAI1.getGenerativeModel({ model: "gemini-1.5-flash" });
-    const result = await model.generateContent(prompt);
-    const text = result.response.text();
-
-    return JSON.parse(text.replace(/```json|```/g, "").trim());
-  } catch (err) {
-    console.error("AI JSON parse error (Resume Scoring):", err);
-    return {
-      skills_found: [],
-      missing_skills: [],
-      scores: {},
-      summary: "Resume analysis failed",
-    };
-  }
+  } catch (err) {
+  	console.error("AI JSON parse error (Resume Scoring):", err);
+  	return {
+  	resumeScore: 0,
+  	feedbackOnResume: {
+  	strengths: ["AI analysis failed."],
+  	weaknesses: ["AI analysis failed."],
+  	},
+  	hiringChance: "Consider",
+  	};
+  }
 };
 
 // ====================== QUESTION GENERATION (AI 2) ======================
 const generateQuestions = async (resumeText, jobRole) => {
-  try {
-    const prompt = `
-You are a technical interviewer.
-Generate 4-6 short, diverse technical questions for this candidate
-based on their resume and the given role.
+  try {
+  	const prompt = `
+You are a technical interviewer hiring for the role of "${jobRole}".
+Generate 4 short, technical questions based *only* on the candidate's resume projects and skills.
+Do NOT ask generic questions.
 Return STRICT JSON in this format:
 {
-  "job_role": "${jobRole}",
-  "questions": ["Q1", "Q2", "Q3", "Q4", "Q5"]
+  "questions": ["Q1", "Q2", "Q3", "Q4"]
 }
 RESUME:
 ${resumeText}
 `;
 
-    const model = genAI2.getGenerativeModel({ model: "gemini-1.5-flash" });
-    const result = await model.generateContent(prompt);
-    const text = result.response.text();
-
-    const parsed = JSON.parse(text.replace(/```json|```/g, "").trim());
-    return parsed.questions || [];
-  } catch (err) {
-    console.error("AI JSON parse error (Resume Questions):", err);
-    return [];
-  }
+		// ✅ FIX: Using 'gemini-flash-latest' from your working example
+  	const model = genAI2.getGenerativeModel({ model: "gemini-flash-latest" });
+  	const result = await model.generateContent(prompt);
+  	const text = result.response.text();
+  	const parsed = JSON.parse(text.replace(/```json|```/g, "").trim());
+  	return parsed.questions || [];
+  } catch (err) {
+  	console.error("AI JSON parse error (Resume Questions):", err);
+  	return [];
+  }
 };
 
-// ====================== OVERALL EVALUATION (AI 3) ======================
-const overallEvaluation = async (scoreData, questionsData) => {
-  try {
-    const prompt = `
-You are a senior hiring evaluator. Based on the resume analysis and generated questions,
-give a concise hiring evaluation. Respond ONLY in this JSON format:
-{
-  "overall_rating": "Excellent" | "Good" | "Average" | "Poor",
-  "feedback": "2-3 sentences giving personalized feedback",
-  "recommendation": "Hire" | "Consider" | "Reject"
-}
-RESUME SCORES:
-${JSON.stringify(scoreData)}
 
-QUESTIONS:
-${JSON.stringify(questionsData)}
+
+// ====================== MAIN RESUME PROCESSOR (FROM PREVIOUS STEP) ======================
+exports.processResume = async (
+  resumeFilePath,
+  jobDescription,
+  jobRole
+) => {
+  try {
+  	const resumeText = await extractResumeText(resumeFilePath);
+
+  	// Run resume scoring and question generation concurrently
+  	const [scoreData, questionsData] = await Promise.all([
+  	scoreResume(resumeText, jobDescription),
+  	generateQuestions(resumeText, jobRole),
+  	]);
+
+  	// This function ONLY returns the data for the /start endpoint
+  	return {
+  	scoreData, // Contains { resumeScore, feedbackOnResume, hiringChance }
+  	questionsData, // Contains ["Q1", "Q2", ...]
+  	};
+  } catch (err) {
+  	console.error("AI processing error:", err);
+  	throw new Error("AI processing failed.");
+  }
+};
+
+
+// ====================== NEW FUNCTION FOR /END ENDPOINT ======================
+/**
+ * Evaluates a list of questions and answers using Gemini.
+ * @param {Array<Object>} qaList - An array of { question, answer } objects.
+ * @returns {Promise<Object>} - An object with scores and feedback.
+ */
+exports.evaluateAnswers = async (qaList) => {
+  try {
+  	const prompt = `
+You are an expert technical interviewer. I will provide you with a list of questions and the candidate's answers.
+Evaluate each answer on a scale of 1 to 10, where 1 is "Poor" and 10 is "Excellent".
+After scoring each question, provide an "overallScore" (0-100) and "feedbackOnInterviewAnswers" with strengths and weaknesses.
+
+Return STRICT JSON with this exact structure:
+{
+  "scores_per_question": [
+  	{ "question": "The first question", "aiScore": <1-10> },
+  	{ "question": "The second question", "aiScore": <1-10> },
+  	...
+  ],
+  "overallScore": <A single number from 0-100>,
+  "feedbackOnInterviewAnswers": {
+  	"strengths": ["List 2-3 key strengths from the answers"],
+  	"weaknesses": ["List 2-3 key weaknesses from the answers"]
+  }
+}
+
+QUESTIONS AND ANSWERS:
+${JSON.stringify(qaList)}
 `;
 
-    const model = genAI3.getGenerativeModel({ model: "gemini-1.5-flash" });
-    const result = await model.generateContent(prompt);
-    const text = result.response.text();
+  	const model = genAI3.getGenerativeModel({ model: "gemini-flash-latest" });
+  	const result = await model.generateContent(prompt);
+  	const text = result.response.text();
+  	return JSON.parse(text.replace(/```json|```/g, "").trim());
 
-    return JSON.parse(text.replace(/```json|```/g, "").trim());
-  } catch (err) {
-    console.error("AI JSON parse error (Overall Eval):", err);
-    return {
-      overall_rating: "Average",
-      feedback: "Evaluation process failed.",
-      recommendation: "Consider",
-    };
-  }
-};
-
-// ====================== MAIN RESUME PROCESSOR ======================
-export const processResume = async (
-  resumeFilePath,
-  jobDescription,
-  jobRole
-) => {
-  try {
-    const resumeText = await extractResumeText(resumeFilePath);
-
-    // Run all three AI tasks concurrently
-    const [scoreData, questionsData] = await Promise.all([
-      scoreResume(resumeText, jobDescription),
-      generateQuestions(resumeText, jobRole),
-    ]);
-
-    const finalEval = await overallEvaluation(scoreData, questionsData);
-
-    // 🟢 Resume file is NOT deleted anymore (as per your request)
-    return {
-      resume_summary: scoreData.summary,
-      resume_scores: scoreData.scores,
-      resumeBasedQuestions: questionsData,
-      final_evaluation: finalEval,
-    };
-  } catch (err) {
-    console.error("AI processing error:", err);
-    throw new Error("AI processing failed.");
-  }
+  } catch (err) {
+  	console.error("AI JSON parse error (Answer Evaluation):", err);
+  	// Return a default error structure
+  	return {
+  	scores_per_question: qaList.map(q => ({ question: q.question, aiScore: 0 })),
+  	overallScore: 0,
+  	feedbackOnInterviewAnswers: {
+  		strengths: ["AI evaluation failed."],
+  		weaknesses: ["AI evaluation failed."],
+  	},
+  	};
+  }
 };
