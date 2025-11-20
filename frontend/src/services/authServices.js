@@ -1,59 +1,70 @@
-//frontend\src\services\authServices.js
+// frontend/src/services/authServices.js
 import axios from "axios";
+import { API_BASE_URL, API_ENDPOINTS } from "../constants";
 
-const API_URL = "http://localhost:3000/api/auth"; // adjust if backend URL differs
+const USER_KEY = "user";
+const TOKEN_KEY = "token";
+const EXPIRY_KEY = "user_expiry";
 
-// ✅ Signup user
+// Helper to set expiration (24 hours from now)
+const setSessionExpiry = () => {
+  const expiryTime = Date.now() + 24 * 60 * 60 * 1000; // 1 day in ms
+  localStorage.setItem(EXPIRY_KEY, expiryTime.toString());
+};
+
+// Check if session is valid
+const isSessionValid = () => {
+  const expiryStr = localStorage.getItem(EXPIRY_KEY);
+  if (!expiryStr) return false;
+
+  const expiry = parseInt(expiryStr, 10);
+  return Date.now() < expiry;
+};
+
 export const signup = async (userData) => {
-  const response = await axios.post(`${API_URL}/signup`, userData);
-  if (response.data.token) {
-    localStorage.setItem("token", response.data.token);
-  }
+  const response = await axios.post(
+    `${API_BASE_URL}${API_ENDPOINTS.AUTH.SIGNUP}`,
+    userData
+  );
   return response.data;
 };
 
-// ✅ Login user
 export const login = async (credentials) => {
-  const response = await axios.post(`${API_URL}/login`, credentials);
-  if (response.data.token) {
-    localStorage.setItem("token", response.data.token);
+  const response = await axios.post(
+    `${API_BASE_URL}${API_ENDPOINTS.AUTH.LOGIN}`,
+    credentials
+  );
+
+  if (response.data.token && response.data.user) {
+    // Store core auth data
+    localStorage.setItem(TOKEN_KEY, response.data.token);
+    localStorage.setItem(USER_KEY, JSON.stringify(response.data.user));
+    setSessionExpiry();
   }
+
   return response.data;
 };
 
-// ✅ Logout user
 export const logout = () => {
-  localStorage.removeItem("token");
+  localStorage.removeItem(TOKEN_KEY);
+  localStorage.removeItem(USER_KEY);
+  localStorage.removeItem(EXPIRY_KEY);
 };
 
-// ✅ Get stored JWT token
-export const getToken = () => {
-  return localStorage.getItem("token");
-};
-
-// ✅ Get current logged-in user (decoded from token if needed)
 export const getCurrentUser = () => {
-  const token = localStorage.getItem("token");
-  if (!token) return null;
-  try {
-    const base64Url = token.split(".")[1];
-    const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-    const user = JSON.parse(window.atob(base64));
-    return user;
-  } catch (error) {
-    console.error("Invalid token:", error);
+  if (!isSessionValid()) {
+    logout();
     return null;
   }
+
+  const userStr = localStorage.getItem(USER_KEY);
+  if (userStr) {
+    return JSON.parse(userStr);
+  }
+  return null;
 };
 
-// ✅ Attach token to axios requests automatically (optional)
-axios.interceptors.request.use(
-  (config) => {
-    const token = getToken();
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
+export const getToken = () => {
+  if (!isSessionValid()) return null;
+  return localStorage.getItem(TOKEN_KEY);
+};

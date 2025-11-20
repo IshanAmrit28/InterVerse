@@ -16,9 +16,11 @@ const reportRouter = require("./routes/reportRoutes");
 
 const app = express();
 
-app.use(express.urlencoded());
-app.use(express.json());
-app.use(cors());
+// FIX: Ensure body parsers are executed FIRST to populate req.body
+app.use(express.urlencoded({ extended: true })); // Handles application/x-www-form-urlencoded
+app.use(express.json()); // Handles application/json (used by Login/Signup)
+app.use(cors()); // CORS should also run before the routers
+
 app.use("/api/questions", questionRouter);
 app.use("/api/interview", reportRouter);
 

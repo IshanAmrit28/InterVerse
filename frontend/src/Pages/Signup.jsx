@@ -1,10 +1,8 @@
-//frontend\src\Pages\Signup.jsx
-import { useState } from "react";
-import { MdEmail } from "react-icons/md";
-import { RiLockPasswordFill } from "react-icons/ri";
-import { FaUser } from "react-icons/fa";
-import { useNavigate, Link } from "react-router-dom"; // ✅ Import navigation
-import illustration from "/illustration.png";
+// frontend/src/Pages/Signup.jsx
+import React, { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { signup } from "../services/authServices";
+import { Mail, Lock, User } from "lucide-react";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -12,219 +10,164 @@ const Signup = () => {
     email: "",
     password: "",
     confirmPassword: "",
-    role: "candidate", // Default role
+    role: "candidate",
   });
-
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
 
-    // Password validation
     if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match!");
+      setError("Passwords do not match.");
       return;
     }
 
-    console.log("Form Submitted:", formData);
+    try {
+      // Map frontend state to backend expected schema
+      const payload = {
+        userName: formData.name,
+        email: formData.email,
+        password: formData.password,
+        userType: formData.role,
+      };
 
-    // ✅ After successful signup, redirect to login
-    navigate("/login");
+      await signup(payload);
+      alert("Signup successful! Please log in.");
+      navigate("/login");
+    } catch (err) {
+      console.error("Signup error:", err);
+      setError(
+        err.response?.data?.message || "Signup failed. Please try again."
+      );
+    }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-black text-white font-sans px-4">
-      <div className="flex flex-col md:flex-row md:items-center bg-black rounded-3xl overflow-hidden shadow-2xl max-w-6xl w-full">
-        {/* Left Form Section */}
-        <div className="w-full md:w-1/2 flex flex-col justify-center px-8 md:px-12 py-12 md:py-16 items-center">
-          <h1 className="text-4xl font-semibold mb-10 text-center">Sign Up</h1>
+    <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white px-4 font-sans">
+      <div className="w-full max-w-md bg-gray-800 rounded-2xl shadow-xl p-8 border border-gray-700">
+        <h2 className="text-3xl font-bold text-center mb-8 text-blue-500">
+          Create Account
+        </h2>
 
-          {/* Form Element */}
-          <form onSubmit={handleSubmit} className="w-full max-w-md">
-            {/* Name */}
-            <div className="flex flex-col mb-6 w-full">
-              <label htmlFor="name" className="text-base font-medium mb-2">
-                Name
-              </label>
-              <div className="relative w-full">
-                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                  <FaUser className="text-gray-400 w-5 h-5" />
-                </div>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  placeholder="Enter your name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  className="pl-10 pr-3 py-2 w-full rounded-md bg-[#1a1a1a] border border-gray-700 text-white placeholder-gray-400 focus:outline-none focus:border-gray-400 transition"
-                  required
-                />
-              </div>
-            </div>
-
-            {/* Role Selection */}
-            <div className="flex flex-col mb-6 w-full">
-              <label className="text-base font-medium mb-3">Select Role</label>
-              <div className="flex items-center space-x-6">
-                <div className="flex items-center">
-                  <input
-                    type="radio"
-                    id="candidate"
-                    name="role"
-                    value="candidate"
-                    checked={formData.role === "candidate"}
-                    onChange={handleChange}
-                    className="w-4 h-4 cursor-pointer text-[#6666e9] bg-gray-700 border-gray-600"
-                  />
-                  <label
-                    htmlFor="candidate"
-                    className="ml-2 text-sm font-medium text-gray-300 cursor-pointer"
-                  >
-                    Candidate
-                  </label>
-                </div>
-                <div className="flex items-center">
-                  <input
-                    type="radio"
-                    id="recruiter"
-                    name="role"
-                    value="recruiter"
-                    checked={formData.role === "recruiter"}
-                    onChange={handleChange}
-                    className="w-4 h-4 cursor-pointer text-[#6666e9] bg-gray-700 border-gray-600"
-                  />
-                  <label
-                    htmlFor="recruiter"
-                    className="ml-2 text-sm font-medium text-gray-300 cursor-pointer"
-                  >
-                    Recruiter
-                  </label>
-                </div>
-              </div>
-            </div>
-
-            {/* Email */}
-            <div className="flex flex-col mb-6 w-full">
-              <label htmlFor="email" className="text-base font-medium mb-2">
-                Email
-              </label>
-              <div className="relative w-full">
-                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                  <MdEmail className="text-gray-400 w-5 h-5" />
-                </div>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  placeholder="Enter your email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="pl-10 pr-3 py-2 w-full rounded-md bg-[#1a1a1a] border border-gray-700 text-white placeholder-gray-400 focus:outline-none focus:border-gray-400 transition"
-                  required
-                />
-              </div>
-            </div>
-
-            {/* Password */}
-            <div className="flex flex-col mb-6 w-full">
-              <label htmlFor="password" className="text-base font-medium mb-2">
-                Password
-              </label>
-              <div className="relative w-full">
-                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                  <RiLockPasswordFill className="text-gray-400 w-5 h-5" />
-                </div>
-                <input
-                  type="password"
-                  id="password"
-                  name="password"
-                  placeholder="Enter password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  className="pl-10 pr-3 py-2 w-full rounded-md bg-[#1a1a1a] border border-gray-700 text-white placeholder-gray-400 focus:outline-none focus:border-gray-400 transition"
-                  required
-                />
-              </div>
-            </div>
-
-            {/* Confirm Password */}
-            <div className="flex flex-col mb-8 w-full">
-              <label
-                htmlFor="confirmPassword"
-                className="text-base font-medium mb-2"
-              >
-                Confirm Password
-              </label>
-              <div className="relative w-full">
-                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                  <RiLockPasswordFill className="text-gray-400 w-5 h-5" />
-                </div>
-                <input
-                  type="password"
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  placeholder="Confirm password"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  className="pl-10 pr-3 py-2 w-full rounded-md bg-[#1a1a1a] border border-gray-700 text-white placeholder-gray-400 focus:outline-none focus:border-gray-400 transition"
-                  required
-                />
-              </div>
-            </div>
-
-            {/* Sign Up Button */}
-            <button
-              type="submit"
-              className="bg-[#f8e8b6] text-black font-medium py-2 rounded-md hover:bg-[#f6de96] transition w-full"
-            >
-              Sign Up
-            </button>
-          </form>
-
-          {/* Login Link */}
-          <div className="mt-6 text-sm text-gray-400 text-center w-full max-w-md">
-            <p>
-              Already have an account?{" "}
-              <Link
-                to="/login"
-                className="text-white hover:underline transition"
-              >
-                Login
-              </Link>
-            </p>
+        {error && (
+          <div className="mb-4 p-3 bg-red-500/20 border border-red-500 text-red-200 rounded text-sm text-center">
+            {error}
           </div>
-        </div>
+        )}
 
-        {/* Right Image Section */}
-        <div className="w-full md:w-1/2 bg-[#d3c5a6] rounded-3xl overflow-hidden h-[550px] relative flex items-center justify-center">
-          <div className="absolute inset-0 flex items-center justify-center">
-            <img
-              src={illustration}
-              alt="AI Interview Illustration"
-              className="w-full h-full object-cover"
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          {/* Name */}
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <User className="text-gray-500 w-5 h-5" />
+            </div>
+            <input
+              type="text"
+              name="name"
+              required
+              placeholder="Full Name"
+              value={formData.name}
+              onChange={handleChange}
+              className="w-full pl-10 pr-4 py-2.5 bg-gray-900 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 text-white"
             />
           </div>
-          <div className="absolute bottom-6 left-6 right-6 bg-white/70 text-black rounded-2xl p-4 backdrop-blur-sm">
-            <h2 className="text-lg font-semibold mb-1">
-              AI-Powered Interviewer
-            </h2>
-            <p className="text-sm leading-snug">
-              Transform recruitment with our cutting-edge AI Interviewer
-              platform—designed to analyze resumes intelligently and conduct
-              personalized virtual interviews. Seamlessly integrate into your
-              hiring workflow to automate candidate screening, reduce bias, and
-              accelerate decision-making.
-            </p>
+
+          {/* Email */}
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <Mail className="text-gray-500 w-5 h-5" />
+            </div>
+            <input
+              type="email"
+              name="email"
+              required
+              placeholder="Email Address"
+              value={formData.email}
+              onChange={handleChange}
+              className="w-full pl-10 pr-4 py-2.5 bg-gray-900 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 text-white"
+            />
           </div>
+
+          {/* Password */}
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <Lock className="text-gray-500 w-5 h-5" />
+            </div>
+            <input
+              type="password"
+              name="password"
+              required
+              placeholder="Password"
+              value={formData.password}
+              onChange={handleChange}
+              className="w-full pl-10 pr-4 py-2.5 bg-gray-900 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 text-white"
+            />
+          </div>
+
+          {/* Confirm Password */}
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <Lock className="text-gray-500 w-5 h-5" />
+            </div>
+            <input
+              type="password"
+              name="confirmPassword"
+              required
+              placeholder="Confirm Password"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              className="w-full pl-10 pr-4 py-2.5 bg-gray-900 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 text-white"
+            />
+          </div>
+
+          {/* Role Selection */}
+          <div className="flex items-center justify-around bg-gray-900 p-2 rounded-lg border border-gray-600">
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="radio"
+                name="role"
+                value="candidate"
+                checked={formData.role === "candidate"}
+                onChange={handleChange}
+                className="text-blue-500 focus:ring-blue-500"
+              />
+              <span className="text-sm text-gray-300">Candidate</span>
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="radio"
+                name="role"
+                value="recruiter"
+                checked={formData.role === "recruiter"}
+                onChange={handleChange}
+                className="text-blue-500 focus:ring-blue-500"
+              />
+              <span className="text-sm text-gray-300">Recruiter</span>
+            </label>
+          </div>
+
+          <button
+            type="submit"
+            className="mt-2 w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors duration-200"
+          >
+            Sign Up
+          </button>
+        </form>
+
+        <div className="mt-6 text-center text-sm text-gray-400">
+          Already have an account?{" "}
+          <Link
+            to="/login"
+            className="text-blue-400 hover:text-blue-300 hover:underline font-medium"
+          >
+            Login
+          </Link>
         </div>
       </div>
     </div>

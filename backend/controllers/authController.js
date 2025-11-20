@@ -69,7 +69,10 @@ exports.login = async (req, res) => {
     return res.status(400).json({ message: "All fields are required" });
 
   try {
-    const user = await User.findOne({ email });
+    // FIX: Select ALL user fields except the password ('+report' ensures the report array is included)
+    const user = await User.findOne({ email }).select(
+      "+report +userName +email +userType +createdAt +updatedAt"
+    );
     if (!user)
       return res.status(401).json({ message: "Invalid email or password" });
 
@@ -79,14 +82,20 @@ exports.login = async (req, res) => {
 
     const token = generateToken(user);
 
+    // FIX: Send the complete user object (excluding password) in the response
+    const userResponse = {
+      id: user._id,
+      userName: user.userName,
+      email: user.email,
+      userType: user.userType,
+      report: user.report, // This is the array of report IDs
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    };
+
     res.status(200).json({
       message: "Login successful",
-      user: {
-        id: user._id,
-        userName: user.userName,
-        email,
-        userType: user.userType,
-      },
+      user: userResponse, // Sending the full data structure
       token,
     });
   } catch (err) {

@@ -7,15 +7,18 @@ const {
   updateQuestion,
   deleteQuestion,
 } = require("../controllers/questionController");
+// NEW: Import the security middleware
+const { protect, isRecruiter } = require("../middleware/authMiddleware");
 
 const questionRouter = express.Router();
 
 // Base URL: /api/questions
 
-questionRouter.post("/", addQuestion); // Add question
-questionRouter.get("/", getQuestions); // Get all (with optional filter)
-questionRouter.get("/:id", getQuestionById); // Get single question
-questionRouter.put("/:id", updateQuestion); // Update question
-questionRouter.delete("/:id", deleteQuestion); // Delete question
+// ADD: Only Recruiters can add, update, or delete questions
+questionRouter.post("/", protect, isRecruiter, addQuestion); // Add question
+questionRouter.get("/", protect, getQuestions); // Get all (Must be logged in to view)
+questionRouter.get("/:id", protect, getQuestionById); // Get single question
+questionRouter.put("/:id", protect, isRecruiter, updateQuestion); // Update question
+questionRouter.delete("/:id", protect, isRecruiter, deleteQuestion); // Delete question
 
 module.exports = questionRouter;
